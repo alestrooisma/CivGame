@@ -24,6 +24,7 @@ public class Controller implements Runnable{
 		this.map = map;
 		this.gui = gui;
 		this.cameraPosition = cameraPosition;
+		Resources.loadResources();
 	}
 
 	public Point2D getCameraPosition() {

@@ -2,9 +2,11 @@ package civ.view;
 
 import civ.model.Map;
 import civ.model.Tile;
+import civ.controller.Resources;
 import java.awt.Color;
 import java.awt.Font;
 import java.awt.Graphics;
+import java.awt.Image;
 import java.awt.geom.Point2D;
 import javax.swing.JPanel;
 
@@ -19,13 +21,14 @@ public class GameField extends JPanel {
 	 * The width and height of a tile. TODO: where to define size? Probably
 	 * (partially) a settings thing.
 	 */
-	public static final int TILE_SIZE = 32;
+	public static final int TILE_SIZE = 100;
 	private CivGUI gui;
 	private long last = System.nanoTime();
 	private double framerate;
 	private double[] framerates = new double[60];
 	private int n;
-	private int vOffset, wOffset;
+	private int v, w;
+	private Graphics g;
 
 	/**
 	 * Creates the {@code GameField} component. Requires a GUI to acquire data
@@ -41,8 +44,7 @@ public class GameField extends JPanel {
 	@Override
 	protected void paintComponent(Graphics g) {
 		super.paintComponent(g);
-		System.out.println("paint");
-		//TODO rethink only drawing visible
+		this.g = g;
 
 		// x and y are coordinates on the grid
 		// v and w are coordinates on this panel
@@ -50,33 +52,30 @@ public class GameField extends JPanel {
 		Map map = gui.getController().getMap();
 		Point2D pos = gui.getController().getCameraPosition();
 
-		vOffset = calculateOffset(pos.getX(), getSize().width,
+		int vOffset = calculateOffset(pos.getX(), getSize().width,
 				map.getMinX(), map.getMaxX());
-		wOffset = calculateOffset(pos.getY(), getSize().height,
+		int wOffset = calculateOffset(pos.getY(), getSize().height,
 				map.getMinY(), map.getMaxY());
 
-//		int xMin = Math.max(map.getMinX(), vOffset / TILE_SIZE - 1);
-//		int yMin = Math.max(map.getMinY(), wOffset / TILE_SIZE - 1);
-//		int xMax = Math.min(map.getMaxX() + 1,
-//				(int) Math.ceil((double) (vOffset + getSize().width) / TILE_SIZE));
-//		int yMax = Math.min(map.getMaxX() + 1,
-//				(int) Math.ceil((double) (wOffset + getSize().height) / TILE_SIZE));
-		int xMin = map.getMinX();
-		int yMin = map.getMinY();
-		int xMax = map.getMaxX();
-		int yMax = map.getMaxY();
 
-		int x, y, v, w, vEntity, wEntity, l;
+		int xMin = Math.max(map.getMinX(), vOffset / TILE_SIZE);
+		int yMin = Math.max(map.getMinY(), wOffset / TILE_SIZE);
+		int xMax = Math.min(map.getMaxX(),
+				(int) Math.ceil((double) (vOffset + getSize().width) / TILE_SIZE - 1));
+		int yMax = Math.min(map.getMaxX(),
+				(int) Math.ceil((double) (wOffset + getSize().height) / TILE_SIZE -1));
+
+		int x, y;
 		Tile tile;
-		for (y = yMin; y < yMax; y++) {
+		for (y = yMin; y <= yMax; y++) {
 			w = y * TILE_SIZE - wOffset;
-			for (x = xMin; x < xMax; x++) {
+			for (x = xMin; x <= xMax; x++) {
+				v = x * TILE_SIZE - vOffset;
 				tile = map.getTile(x, y);
 				if (tile != null) {
 					drawTile(tile);
 				}
 			}
-			System.out.println();
 		}
 		calculateFrameRate();
 		g.setColor(Color.red);
@@ -87,15 +86,19 @@ public class GameField extends JPanel {
 	private void drawTile(Tile tile) {
 		switch (tile.getTerrain()) {
 			case Tile.GRASSLAND:
-				System.out.print("G");
+				drawImage(Resources.grassland);
 				break;
 			case Tile.PLAINS:
-				System.out.print("P");
+				drawImage(Resources.plains);
 				break;
 			case Tile.WATER:
-				System.out.print("~");
+				drawImage(Resources.water);
 				break;
 		}
+	}
+
+	private void drawImage(Image img) {
+		g.drawImage(img, v, w, null);
 	}
 
 	private static int calculateOffset(double pos, double size, double min, double max) {

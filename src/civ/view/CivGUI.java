@@ -39,7 +39,7 @@ public class CivGUI extends AbstractGUI implements ActionListener {
 
 		// Create game field
 		gf = new GameField(this);
-		gf.setPreferredSize(new Dimension(1024, 768));
+		gf.setPreferredSize(new Dimension(1280, 960));
 		gf.setBackground(Color.DARK_GRAY);
 
 		// Create chat box
