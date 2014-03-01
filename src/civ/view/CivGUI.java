@@ -4,8 +4,12 @@ import civ.controller.Controller;
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Dimension;
+import java.awt.Point;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.KeyListener;
+import java.awt.event.MouseListener;
+import java.awt.geom.Point2D;
 import javax.swing.JFrame;
 import javax.swing.Timer;
 
@@ -33,7 +37,7 @@ public class CivGUI extends AbstractGUI implements ActionListener {
 	@Override
 	protected void createAndShowGUI() {
 		// Create frame
-		frame = new JFrame("Civ");
+		frame = new JFrame("CivGame");
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 //		frame.getContentPane().setBackground(Color.DARK_GRAY);
 
@@ -70,6 +74,28 @@ public class CivGUI extends AbstractGUI implements ActionListener {
 
 	public void setController(Controller controller) {
 		this.controller = controller;
+	}
+	
+	public Point worldToWindow(Point worldCoordinates) {
+		return gf.worldToWindow(worldCoordinates);
+	}
+	
+	public Point2D windowToWorld(Point windowCoordinates) {
+		return gf.windowToWorld(windowCoordinates);
+	}
+	
+	public Point windowToTile(Point windowCoordinates) {
+		Point2D worldCoordinates = windowToWorld(windowCoordinates);
+		return new Point((int) Math.round(worldCoordinates.getX()), 
+				(int) Math.round(worldCoordinates.getY()));
+	}
+	
+	public void attachMouseListener(MouseListener listener) {
+		gf.addMouseListener(listener);
+	}
+	
+	public void attachKeyboardListener(KeyListener listener) {
+		frame.addKeyListener(listener);
 	}
 
 	@Override

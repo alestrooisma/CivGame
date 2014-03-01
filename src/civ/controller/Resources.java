@@ -16,18 +16,11 @@ import javax.imageio.ImageIO;
  * @author Ale Strooisma
  */
 public class Resources {
-	/**
-	 * Graphics for placeholder implementation.
-	 */
 	public static BufferedImage grassland;
-	/**
-	 * Graphics for placeholder implementation.
-	 */
 	public static BufferedImage plains;
-	/**
-	 * Graphics for placeholder implementation.
-	 */
 	public static BufferedImage water;
+	public static BufferedImage city;
+	public static BufferedImage yieldbackdrop;
 
 	/* Creation of static members */
 	public static void loadResources() {
@@ -36,6 +29,8 @@ public class Resources {
 			grassland = ImageIO.read(new File("assets/grassland.png"));
 			plains = ImageIO.read(new File("assets/plains.png"));
 			water = ImageIO.read(new File("assets/water.png"));
+			city = ImageIO.read(new File("assets/city.png"));
+			yieldbackdrop = ImageIO.read(new File("assets/yieldbackdrop.png"));
 		} catch (IOException ex) {
 			ex.printStackTrace();
 			System.out.println("Unable to read image files");

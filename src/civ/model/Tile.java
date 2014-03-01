@@ -9,6 +9,7 @@ public class Tile {
 	public static final int WATER = 2;
 	private Point position;
 	private int terrain;
+	private City city;
 
 	public Tile(Point position, int terrain) {
 		this.position = position;
@@ -21,5 +22,13 @@ public class Tile {
 
 	public int getTerrain() {
 		return terrain;
+	}
+
+	public City getCity() {
+		return city;
+	}
+
+	public void setCity(City city) {
+		this.city = city;
 	}
 }
