@@ -4,6 +4,7 @@
  */
 package civ.controller;
 
+import civ.view.Dialog;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import javax.swing.JOptionPane;
@@ -31,14 +32,10 @@ class KeyHandler implements KeyListener {
 				if (controller.getViewedCity() != null) {
 					controller.leaveCity();
 				} else {
-					int n = JOptionPane.showConfirmDialog(
-                            controller.getGui().getFrame(), 
-							"Are you sure you want to quit?",
-                            "Please confirm",
-                            JOptionPane.YES_NO_OPTION);
-                    if (n == JOptionPane.YES_OPTION) {
-                        System.exit(0);
-                    }
+					if (Dialog.getConfirmation(controller.getGui().getFrame(),
+							"Are you sure you want to quit the game?")) {
+						System.exit(0);
+					}
 				}
 				break;
 			case KeyEvent.VK_ENTER:

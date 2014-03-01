@@ -112,12 +112,14 @@ public class GameField extends JPanel {
 	private void drawWorldHUD() {
 		// New turn message
 		long dt = System.currentTimeMillis() - gui.getController().getTurnStartTime();
-		if (dt < 2000) {
-			if (dt < 1000) {
+		float delay = 0.5f;
+		float fade = 1f;
+		if (dt < (delay + fade) * 1000) {
+			if (dt < delay * 1000) {
 				g.setColor(Color.BLACK);
 			} else {
-				System.out.println("dt = " + dt + ", alpha = " + (2.0 - ((double) dt / 1000)));
-				g.setColor(new Color(0, 0, 0, 2.0f - ((float) dt / 1000)));
+				float alpha = (delay + fade) - ((float) dt / (fade * 1000));
+				g.setColor(new Color(0, 0, 0, alpha));
 			}
 			g.setFont(boldFont.deriveFont(50f));
 			drawStringBC(gui.getController().getCurrentCivilization().getName(), getWidth() / 2, 250);
@@ -158,7 +160,7 @@ public class GameField extends JPanel {
 	}
 
 	private void drawTile(Tile tile) {
-		
+
 		// Draw terrain background
 		switch (tile.getTerrain()) {
 			case Tile.GRASSLAND:
@@ -171,19 +173,19 @@ public class GameField extends JPanel {
 				drawImage(Resources.water);
 				break;
 		}
-		
+
 		// Draw city
 		if (tile.getCity() != null) {
 			drawImage(Resources.city);
 			int width = g.getFontMetrics().stringWidth(tile.getCity().getName());
 			g.drawString(tile.getCity().getName(), v + (TILE_SIZE - width) / 2, w + TILE_SIZE - 10);
 		}
-		
+
 //		Point p = worldToWindow(tile.getPosition());
 //		drawStringTL("" + Util.distanceSquared(ZERO, tile.getPosition())
 //				+ " / " + String.format("%.2f", Util.distance(ZERO, tile.getPosition())),
 //				p.x, p.y);
-		
+
 	}
 
 	private void drawImage(Image img) {

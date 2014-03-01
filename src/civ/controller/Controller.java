@@ -9,6 +9,7 @@ import civ.model.City;
 import civ.model.Map;
 import civ.model.Tile;
 import civ.view.CivGUI;
+import civ.view.Dialog;
 import java.awt.Point;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -115,11 +116,7 @@ public class Controller implements Runnable, ActionListener {
 
 		String name = "";
 		while (name.length() == 0) {
-			name = JOptionPane.showInputDialog(
-					gui.getFrame(),
-					"What do you want your city to be called?",
-					"Name your city",
-					JOptionPane.PLAIN_MESSAGE);
+			name = Dialog.getString(gui.getFrame(), "What do you want your city to be called?");
 
 			if (name == null) {
 				setStatus("Cancelled building.", true);
