@@ -1,5 +1,6 @@
 package civ.view;
 
+import civ.model.Civilization;
 import civ.controller.Controller;
 import java.awt.BorderLayout;
 import java.awt.Color;

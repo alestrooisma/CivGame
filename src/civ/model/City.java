@@ -16,13 +16,19 @@ public class City {
 
 	private String name;
 	private Point position;
+	private Civilization civilization;
 	private int population;
 	private LinkedList<Point> workedTiles = new LinkedList<Point>();
 
-	public City(String name, Point position) {
+	public City(Civilization civilization, String name, Point position) {
+		this.civilization = civilization;
 		this.name = name;
 		this.position = position;
 		this.population = 3;
+	}
+
+	public void setName(String name) {
+		this.name = name;
 	}
 
 	public String getName() {
@@ -31,6 +37,14 @@ public class City {
 
 	public Point getPosition() {
 		return position;
+	}
+
+	public Civilization getCivilization() {
+		return civilization;
+	}
+
+	public void setCivilization(Civilization civilization) {
+		this.civilization = civilization;
 	}
 
 	public int getPopulation() {

@@ -1,5 +1,6 @@
 package civ;
 
+import civ.model.Civilization;
 import civ.controller.Controller;
 import civ.model.City;
 import civ.model.Map;
@@ -29,8 +30,11 @@ public class CivGame {
 		}
 		Map map = new Map(0, x - 1, 0, y - 1, tiles);
 		Point cityLocation = new Point(x/2+1, y/2+1);
-		map.getTile(cityLocation).setCity(new City("Amsterdam", cityLocation));
-
+		Civilization netherlands = new Civilization("The Netherlands");
+		City amsterdam = new City(netherlands, "Amsterdam", cityLocation);
+		netherlands.addCity(amsterdam);
+		map.getTile(cityLocation).setCity(amsterdam);
+		
 		// Create the GUI
 		CivGUI gui = new CivGUI();
 		try {
@@ -41,7 +45,9 @@ public class CivGame {
 			Logger.getLogger(CivGame.class.getName()).log(Level.SEVERE, null, ex);
 		}
 
-		Controller controller = new Controller(map, gui, new Point2D.Double(x / 2, y / 2));
+		Controller controller = new Controller(map, 
+				new Civilization[]{netherlands}, 
+				gui, new Point2D.Double(x / 2, y / 2));
 		gui.setController(controller);
 		controller.run();
 	}
