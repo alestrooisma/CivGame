@@ -4,8 +4,8 @@ import civ.controller.Controller;
 import civ.model.Map;
 import civ.model.Tile;
 import civ.controller.Resources;
-import civ.controller.Util;
 import civ.model.City;
+import civ.model.Unit;
 import java.awt.Color;
 import java.awt.Font;
 import java.awt.Graphics;
@@ -232,6 +232,11 @@ public class GameField extends JPanel {
 			drawStringBC(tile.getCity().getName() + " (" + tile.getCity().getPopulation() + ")", v + TILE_SIZE / 2, w + TILE_SIZE - 10);
 		}
 
+		// Draw units
+		for (Unit u : tile.getUnits()) {
+			drawImage(Resources.units[u.getType()]);
+		}
+		
 //		Point p = worldToWindow(tile.getPosition());
 //		drawStringTL("" + Util.distanceSquared(ZERO, tile.getPosition())
 //				+ " / " + String.format("%.2f", Util.distance(ZERO, tile.getPosition())),

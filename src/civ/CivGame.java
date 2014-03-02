@@ -5,6 +5,7 @@ import civ.controller.Controller;
 import civ.model.City;
 import civ.model.Map;
 import civ.model.Tile;
+import civ.model.Unit;
 import civ.view.CivGUI;
 import java.awt.Point;
 import java.awt.geom.Point2D;
@@ -29,11 +30,24 @@ public class CivGame {
 			tiles[i] = new Tile(new Point(i % x, i / x), randomTerrain());
 		}
 		Map map = new Map(0, x - 1, 0, y - 1, tiles);
-		Point cityLocation = new Point(x/2+1, y/2+1);
+		// Create the player's civilization
 		Civilization netherlands = new Civilization("The Netherlands");
-		City amsterdam = new City(netherlands, "Amsterdam", cityLocation);
+		// Create a city
+		Point location = new Point(x/2+1, y/2+1);
+		City amsterdam = new City(netherlands, "Amsterdam", location);
+		amsterdam.addFood(amsterdam.getPopulation()); // To prevent starvation in the first turn
 		netherlands.addCity(amsterdam);
-		map.getTile(cityLocation).setCity(amsterdam);
+		map.getTile(location).setCity(amsterdam);
+		// Create a warrior
+		location = new Point(location);
+		Unit unit = new Unit(netherlands, Unit.WARRIOR, 2.5, 1, 3);
+		netherlands.addUnit(unit);
+		map.getTile(location).addUnit(unit);
+		// Create a settler
+		location = new Point(x/2+2, y/2+1);
+		unit = new Unit(netherlands, Unit.SETTLER, 2.5, 0, 0);
+		netherlands.addUnit(unit);
+		map.getTile(location).addUnit(unit);
 		
 		// Create the GUI
 		CivGUI gui = new CivGUI();

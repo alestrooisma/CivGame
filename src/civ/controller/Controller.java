@@ -153,18 +153,16 @@ public class Controller implements Runnable, ActionListener {
 		}
 		turnStartTime = System.currentTimeMillis();
 
-		if (turn > 1) {
-			// Update cities
-			for (City c : civ.getCities()) {
-				// Production
-				c.addFood(c.getNetFoodYield(map));
-				c.addMaterials(c.getNetMaterialsYield(map));
-				// Growth
-				if (c.getFood() >= c.getGrowsAt()) {
-					c.grow();
-				} else if (c.getFood() < 0) {
-					c.starvation();
-				}
+		// Update cities
+		for (City c : civ.getCities()) {
+			// Production
+			c.addFood(c.getNetFoodYield(map));
+			c.addMaterials(c.getNetMaterialsYield(map));
+			// Growth
+			if (c.getFood() >= c.getGrowsAt()) {
+				c.grow();
+			} else if (c.getFood() < 0) {
+				c.starvation();
 			}
 		}
 	}
