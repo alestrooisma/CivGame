@@ -19,7 +19,7 @@ import javax.swing.JPanel;
  *
  * @author ale
  */
-public class GameField extends JPanel {
+public class GameField extends Panel {
 
 	/**
 	 * The width and height of a tile. TODO: where to define size? Probably
@@ -27,17 +27,12 @@ public class GameField extends JPanel {
 	 */
 	public static final int TILE_SIZE = 100;
 	public static final int CITY_BAR_HEIGHT = 250;
-	public static final Point ZERO = new Point();
-	private CivGUI gui;
 	private long last = System.nanoTime();
 	private double framerate;
 	private double[] framerates = new double[60];
 	private int n;
 	private Point offset;
 	private int v, w;
-	private Graphics g;
-	private Font normalFont;
-	private Font boldFont;
 
 	/**
 	 * Creates the {@code GameField} component. Requires a GUI to acquire data
@@ -46,19 +41,13 @@ public class GameField extends JPanel {
 	 * @param gui the GUI this component is part of
 	 */
 	public GameField(CivGUI gui) {
-		super();
+		super(gui);
 		this.gui = gui;
 
 	}
 
 	@Override
-	protected void paintComponent(Graphics g) {
-		super.paintComponent(g);
-		this.g = g;
-
-		normalFont = g.getFont();
-		boldFont = normalFont.deriveFont(Font.BOLD);
-
+	protected void render() {
 		offset = worldToWindow(ZERO);
 		City c = gui.getController().getViewedCity();
 
@@ -135,61 +124,11 @@ public class GameField extends JPanel {
 	}
 
 	private void drawCityScreen(City city) {
-
-		//TODO separate panel
-
-		// Draw bottom bar background
-		g.setColor(Color.GRAY);
-		g.fillRect(0, getSize().height - CITY_BAR_HEIGHT, getSize().width - 1, CITY_BAR_HEIGHT - 1);
-		g.setColor(Color.BLACK);
-		g.drawRect(0, getSize().height - CITY_BAR_HEIGHT, getSize().width - 1, CITY_BAR_HEIGHT - 1);
-
-		// Draw text on bar
-		Map map = gui.getController().getMap();
-		int x1 = 10;
-		int x2 = x1 + 200;
-		int x3 = x1 + 50;
-		int y = getHeight() - CITY_BAR_HEIGHT + 10;
-
-		// Population info
-		drawStringTL("Population:", x1, y);
-		if (city.getPopulation() - city.getWorkedTiles().size() > 0) {
-			drawStringTL("" + city.getPopulation()
-					+ " (" + (city.getPopulation() - city.getWorkedTiles().size())
-					+ " unemployed)", x2, y);
-		} else {
-			drawStringTL("" + city.getPopulation(), x2, y);
-		}
-		y += g.getFontMetrics().getHeight();
-		drawStringTL("Growth:", x1, y);
-		drawStringTL("" + city.getFood() + " / " + city.getGrowsAt(), x2, y);
-
-		// Production info
-		y += g.getFontMetrics().getHeight() * 2;
-		drawStringTL("Production:", x3, y);
-		y += g.getFontMetrics().getHeight();
-		drawStringTL("Food:", x1, y);
-		drawStringTL(String.format("%+d (%d produced - %d eaten)",
-				city.getNetFoodYield(map), city.getFoodYield(map), city.getPopulation()), x2, y);
-		y += g.getFontMetrics().getHeight();
-		drawStringTL("Materials:", x1, y);
-		drawStringTL(String.format("%+d", city.getNetMaterialsYield(map)), x2, y);
-
-		// Warehouse info
-		y += g.getFontMetrics().getHeight() * 2;
-		drawStringTL("Stored goods:", x3, y);
-		y += g.getFontMetrics().getHeight();
-//		drawStringTL("Food:", x1, y);
-//		drawStringTL("" + city.getFood(), x2, y);
-		y += g.getFontMetrics().getHeight();
-		drawStringTL("Materials:", x1, y);
-		drawStringTL("" + city.getMaterials(), x2, y);
-
 		// Mark worked tiles
 		for (Point p : city.getWorkedTiles()) {
 			setDrawTile(p);
 			drawImage(Resources.yieldbackdrop);
-			Tile t = map.getTile(p);
+			Tile t = gui.getController().getMap().getTile(p);
 			g.setColor(Color.GREEN);
 			drawStringBC("" + t.getFoodYield(),
 					(int) (v + 0.35 * TILE_SIZE), (int) (w + 0.84 * TILE_SIZE));
@@ -197,7 +136,6 @@ public class GameField extends JPanel {
 			drawStringBC("" + t.getMaterialsYield(),
 					(int) (v + 0.65 * TILE_SIZE), (int) (w + 0.84 * TILE_SIZE));
 		}
-
 	}
 
 	private void writeFrameRate() {
@@ -232,11 +170,11 @@ public class GameField extends JPanel {
 			drawStringBC(tile.getCity().getName() + " (" + tile.getCity().getPopulation() + ")", v + TILE_SIZE / 2, w + TILE_SIZE - 10);
 		}
 
-		// Draw units
-		for (Unit u : tile.getUnits()) {
-			drawImage(Resources.units[u.getType()]);
+		// Draw top unit
+		if (!tile.getUnits().isEmpty()) {
+			drawImage(Resources.units[tile.getUnits().getLast().getType()]);
 		}
-		
+
 //		Point p = worldToWindow(tile.getPosition());
 //		drawStringTL("" + Util.distanceSquared(ZERO, tile.getPosition())
 //				+ " / " + String.format("%.2f", Util.distance(ZERO, tile.getPosition())),
@@ -245,7 +183,7 @@ public class GameField extends JPanel {
 	}
 
 	private void drawImage(Image img) {
-		g.drawImage(img, v, w, null);
+		drawImage(img, v, w);
 	}
 
 	private void setDrawTile(Point p) {
@@ -263,42 +201,6 @@ public class GameField extends JPanel {
 
 	private void setDrawTileY(int y) {
 		w = y * TILE_SIZE + offset.y;
-	}
-
-	private void drawStringTL(String str, int x, int y) {
-		drawStringBL(str, x, y + g.getFontMetrics().getHeight());
-	}
-
-	private void drawStringTC(String str, int x, int y) {
-		drawStringTL(str, x - g.getFontMetrics().stringWidth(str) / 2, y);
-	}
-
-	private void drawStringTR(String str, int x, int y) {
-		drawStringTL(str, x - g.getFontMetrics().stringWidth(str), y);
-	}
-
-	private void drawStringML(String str, int x, int y) {
-		g.drawString(str, x, y + g.getFontMetrics().getHeight() / 2);
-	}
-
-	private void drawStringMC(String str, int x, int y) {
-		drawStringBL(str, x - g.getFontMetrics().stringWidth(str) / 2, y);
-	}
-
-	private void drawStringMR(String str, int x, int y) {
-		drawStringBL(str, x - g.getFontMetrics().stringWidth(str), y);
-	}
-
-	private void drawStringBL(String str, int x, int y) {
-		g.drawString(str, x, y);
-	}
-
-	private void drawStringBC(String str, int x, int y) {
-		drawStringBL(str, x - g.getFontMetrics().stringWidth(str) / 2, y);
-	}
-
-	private void drawStringBR(String str, int x, int y) {
-		drawStringBL(str, x - g.getFontMetrics().stringWidth(str), y);
 	}
 
 	public Point2D windowToWorld(Point2D windowCoordinates) {

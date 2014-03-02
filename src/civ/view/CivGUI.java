@@ -1,6 +1,5 @@
 package civ.view;
 
-import civ.model.Civilization;
 import civ.controller.Controller;
 import java.awt.BorderLayout;
 import java.awt.Color;
@@ -12,6 +11,7 @@ import java.awt.event.KeyListener;
 import java.awt.event.MouseListener;
 import java.awt.geom.Point2D;
 import javax.swing.JFrame;
+import javax.swing.JPanel;
 import javax.swing.Timer;
 
 /**
@@ -23,6 +23,7 @@ public class CivGUI extends AbstractGUI implements ActionListener {
 	private JFrame frame;
 	private GameField gf;
 	private Controller controller;
+	private CityScreenPanel cityScreenPanel;
 	
 	public static final int maxFrameRate = 60;
 	private Timer redrawTimer;
@@ -41,19 +42,18 @@ public class CivGUI extends AbstractGUI implements ActionListener {
 		frame = new JFrame("CivGame");
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 //		frame.getContentPane().setBackground(Color.DARK_GRAY);
+		frame.setPreferredSize(new Dimension(1280, 960));
 
 		// Create game field
 		gf = new GameField(this);
-		gf.setPreferredSize(new Dimension(1280, 960));
 		gf.setBackground(Color.DARK_GRAY);
-
-		// Create chat box
-//		ChatBox cb = new ChatBox();
-//		Controller.getController().getNetworkManager().addMessageHandler(cb);
+		
+		// Create city screen
+		cityScreenPanel = new CityScreenPanel(this);
 
 		// Add everything
 		frame.add(gf, BorderLayout.CENTER);
-//		frame.add(cb, BorderLayout.PAGE_END);
+		gf.add(cityScreenPanel, BorderLayout.PAGE_END);
 
 		// Start drawing
 		frame.pack();
@@ -102,7 +102,15 @@ public class CivGUI extends AbstractGUI implements ActionListener {
 	@Override
 	public void update() {
 		//frame.repaint();
+		
+		if (controller.getViewedCity() == null) {
+			cityScreenPanel.setVisible(false);
+		} else {
+			cityScreenPanel.setVisible(true);
+		}
+		
 		gf.repaint();
+		cityScreenPanel.repaint();
 	}
 
 	@Override

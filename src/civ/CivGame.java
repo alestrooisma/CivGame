@@ -22,9 +22,9 @@ public class CivGame {
 	 * @param args the command line arguments
 	 */
 	public static void main(String[] args) {
-		
+
 		// Create the map
-		int x = 13, y = 11;
+		int x = 25, y = 25;
 		Tile[] tiles = new Tile[x * y];
 		for (int i = 0; i < tiles.length; i++) {
 			tiles[i] = new Tile(new Point(i % x, i / x), randomTerrain());
@@ -33,7 +33,7 @@ public class CivGame {
 		// Create the player's civilization
 		Civilization netherlands = new Civilization("The Netherlands");
 		// Create a city
-		Point location = new Point(x/2+1, y/2+1);
+		Point location = new Point(x / 2, y / 2);
 		City amsterdam = new City(netherlands, "Amsterdam", location);
 		amsterdam.addFood(amsterdam.getPopulation()); // To prevent starvation in the first turn
 		netherlands.addCity(amsterdam);
@@ -44,11 +44,11 @@ public class CivGame {
 		netherlands.addUnit(unit);
 		map.getTile(location).addUnit(unit);
 		// Create a settler
-		location = new Point(x/2+2, y/2+1);
+		location = new Point(x / 2, y / 2 + 1);
 		unit = new Unit(netherlands, Unit.SETTLER, 2.5, 0, 0);
 		netherlands.addUnit(unit);
 		map.getTile(location).addUnit(unit);
-		
+
 		// Create the GUI
 		CivGUI gui = new CivGUI();
 		try {
@@ -59,8 +59,8 @@ public class CivGame {
 			Logger.getLogger(CivGame.class.getName()).log(Level.SEVERE, null, ex);
 		}
 
-		Controller controller = new Controller(map, 
-				new Civilization[]{netherlands}, 
+		Controller controller = new Controller(map,
+				new Civilization[]{netherlands},
 				gui, new Point2D.Double(x / 2, y / 2));
 		gui.setController(controller);
 		controller.run();
