@@ -19,6 +19,10 @@ public class City {
 	private Civilization civilization;
 	private int population;
 	private LinkedList<Point> workedTiles = new LinkedList<Point>();
+	
+	//Temp
+	private int food;
+	private int materials;
 
 	public City(Civilization civilization, String name, Point position) {
 		this.civilization = civilization;
@@ -75,5 +79,69 @@ public class City {
 
 	public LinkedList<Point> getWorkedTiles() {
 		return workedTiles;
+	}
+
+	public int getFood() {
+		return food;
+	}
+
+	public int getMaterials() {
+		return materials;
+	}
+
+	public int getNetFoodYield(Map map) {
+		return getFoodYield(map)-population;
+	}
+
+	public int getFoodYield(Map map) {
+		int yield = 0;
+		for (Point p : getWorkedTiles()) {
+				Tile t = map.getTile(p);
+				yield += t.getFoodYield();
+			}
+		return yield;
+	}
+
+	public int getNetMaterialsYield(Map map) {
+		return getMaterialsYield(map);
+	}
+
+	public int getMaterialsYield(Map map) {
+		int yield = 0;
+		for (Point p : getWorkedTiles()) {
+				Tile t = map.getTile(p);
+				yield += t.getMaterialsYield();
+			}
+		return yield;
+	}
+
+	public void addFood(int food) {
+		this.food += food;
+	}
+
+	public void addMaterials(int materials) {
+		this.materials += materials;
+	}
+
+	public void reduceFood(int food) {
+		this.food -= food;
+	}
+
+	public void reduceMaterials(int materials) {
+		this.materials -= materials;
+	}
+
+	public int getGrowsAt() {
+		return Math.max(10, (population - 2) * 10); 
+	}
+
+	public void grow() {
+		reduceFood(getGrowsAt());
+		population++;
+	}
+
+	public void starvation() {
+		food = 0;
+		population--;
 	}
 }

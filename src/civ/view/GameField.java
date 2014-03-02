@@ -103,13 +103,6 @@ public class GameField extends JPanel {
 	}
 
 	private void drawGeneralHUD() {
-		g.setColor(Color.RED);
-		g.setFont(boldFont);
-		writeFrameRate();
-		writeMode();
-	}
-
-	private void drawWorldHUD() {
 		// New turn message
 		long dt = System.currentTimeMillis() - gui.getController().getTurnStartTime();
 		float delay = 0.5f;
@@ -127,6 +120,14 @@ public class GameField extends JPanel {
 			drawStringTC("Turn " + gui.getController().getTurn(), getWidth() / 2, 250);
 		}
 
+		// FPS
+		g.setColor(Color.RED);
+		g.setFont(boldFont);
+		writeFrameRate();
+		writeMode();
+	}
+
+	private void drawWorldHUD() {
 		// Status message
 		g.setColor(Color.RED);
 		g.setFont(boldFont);
@@ -134,16 +135,67 @@ public class GameField extends JPanel {
 	}
 
 	private void drawCityScreen(City city) {
+
+		//TODO separate panel
+
+		// Draw bottom bar background
 		g.setColor(Color.GRAY);
 		g.fillRect(0, getSize().height - CITY_BAR_HEIGHT, getSize().width - 1, CITY_BAR_HEIGHT - 1);
 		g.setColor(Color.BLACK);
 		g.drawRect(0, getSize().height - CITY_BAR_HEIGHT, getSize().width - 1, CITY_BAR_HEIGHT - 1);
-		int x = 10;
+
+		// Draw text on bar
+		Map map = gui.getController().getMap();
+		int x1 = 10;
+		int x2 = x1 + 200;
+		int x3 = x1 + 50;
 		int y = getHeight() - CITY_BAR_HEIGHT + 10;
-		drawStringTL("Population: " + city.getPopulation(), x, y);
+
+		// Population info
+		drawStringTL("Population:", x1, y);
+		if (city.getPopulation() - city.getWorkedTiles().size() > 0) {
+			drawStringTL("" + city.getPopulation()
+					+ " (" + (city.getPopulation() - city.getWorkedTiles().size())
+					+ " unemployed)", x2, y);
+		} else {
+			drawStringTL("" + city.getPopulation(), x2, y);
+		}
+		y += g.getFontMetrics().getHeight();
+		drawStringTL("Growth:", x1, y);
+		drawStringTL("" + city.getFood() + " / " + city.getGrowsAt(), x2, y);
+
+		// Production info
+		y += g.getFontMetrics().getHeight() * 2;
+		drawStringTL("Production:", x3, y);
+		y += g.getFontMetrics().getHeight();
+		drawStringTL("Food:", x1, y);
+		drawStringTL(String.format("%+d (%d produced - %d eaten)",
+				city.getNetFoodYield(map), city.getFoodYield(map), city.getPopulation()), x2, y);
+		y += g.getFontMetrics().getHeight();
+		drawStringTL("Materials:", x1, y);
+		drawStringTL(String.format("%+d", city.getNetMaterialsYield(map)), x2, y);
+
+		// Warehouse info
+		y += g.getFontMetrics().getHeight() * 2;
+		drawStringTL("Stored goods:", x3, y);
+		y += g.getFontMetrics().getHeight();
+//		drawStringTL("Food:", x1, y);
+//		drawStringTL("" + city.getFood(), x2, y);
+		y += g.getFontMetrics().getHeight();
+		drawStringTL("Materials:", x1, y);
+		drawStringTL("" + city.getMaterials(), x2, y);
+
+		// Mark worked tiles
 		for (Point p : city.getWorkedTiles()) {
 			setDrawTile(p);
 			drawImage(Resources.yieldbackdrop);
+			Tile t = map.getTile(p);
+			g.setColor(Color.GREEN);
+			drawStringBC("" + t.getFoodYield(),
+					(int) (v + 0.35 * TILE_SIZE), (int) (w + 0.84 * TILE_SIZE));
+			g.setColor(Color.BLUE);
+			drawStringBC("" + t.getMaterialsYield(),
+					(int) (v + 0.65 * TILE_SIZE), (int) (w + 0.84 * TILE_SIZE));
 		}
 
 	}
@@ -177,8 +229,7 @@ public class GameField extends JPanel {
 		// Draw city
 		if (tile.getCity() != null) {
 			drawImage(Resources.city);
-			int width = g.getFontMetrics().stringWidth(tile.getCity().getName());
-			g.drawString(tile.getCity().getName(), v + (TILE_SIZE - width) / 2, w + TILE_SIZE - 10);
+			drawStringBC(tile.getCity().getName() + " (" + tile.getCity().getPopulation() + ")", v + TILE_SIZE / 2, w + TILE_SIZE - 10);
 		}
 
 //		Point p = worldToWindow(tile.getPosition());

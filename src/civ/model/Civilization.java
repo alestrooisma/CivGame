@@ -4,7 +4,6 @@
  */
 package civ.model;
 
-import civ.model.City;
 import java.util.LinkedList;
 
 /**
@@ -31,6 +30,10 @@ public class Civilization {
 
 	public void setDefeated(boolean defeated) {
 		this.defeated = defeated;
+	}
+
+	public LinkedList<City> getCities() {
+		return cities;
 	}
 	
 	public void addCity(City city) {

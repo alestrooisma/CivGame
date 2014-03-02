@@ -27,23 +27,19 @@ public class Controller implements Runnable, ActionListener {
 	public static final int NORMAL = 0;
 	public static final int BUILD = 1;
 	public static final int CITY = 2;
-	
 	// Model
 	private Map map;
 	private int currentPlayer = 0;
 	private Civilization[] civilizations;
-	
 	// View
 	private CivGUI gui;
 	private Point2D cameraPosition;
 	private String status = "Welcome!";
 	private City viewedCity = null;
 	private Timer statusTimer = new Timer(5000, this);
-	
 	// Other
 	private int turn = 0;
 	private long turnStartTime;
-	
 	// Temp (for simple building)
 	private int mode = NORMAL;
 
@@ -97,7 +93,7 @@ public class Controller implements Runnable, ActionListener {
 	public Civilization getCurrentCivilization() {
 		return civilizations[currentPlayer];
 	}
-	
+
 	@Override
 	public void run() {
 		gui.attachMouseListener(new MouseHandler(this));
@@ -144,11 +140,10 @@ public class Controller implements Runnable, ActionListener {
 	}
 
 	public void endTurn() {
-		leaveCity();
 		do {
 			currentPlayer = (currentPlayer + 1) % civilizations.length;
 		} while (getCurrentCivilization().isDefeated());
-		
+
 		startTurn(getCurrentCivilization());
 	}
 
@@ -157,9 +152,21 @@ public class Controller implements Runnable, ActionListener {
 			turn++;
 		}
 		turnStartTime = System.currentTimeMillis();
-		
-		// Update cities
-		//TODO
+
+		if (turn > 1) {
+			// Update cities
+			for (City c : civ.getCities()) {
+				// Production
+				c.addFood(c.getNetFoodYield(map));
+				c.addMaterials(c.getNetMaterialsYield(map));
+				// Growth
+				if (c.getFood() >= c.getGrowsAt()) {
+					c.grow();
+				} else if (c.getFood() < 0) {
+					c.starvation();
+				}
+			}
+		}
 	}
 
 	public int getTurn() {

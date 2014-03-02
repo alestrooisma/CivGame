@@ -21,7 +21,7 @@ public class CivGame {
 	 * @param args the command line arguments
 	 */
 	public static void main(String[] args) {
-
+		
 		// Create the map
 		int x = 13, y = 11;
 		Tile[] tiles = new Tile[x * y];
