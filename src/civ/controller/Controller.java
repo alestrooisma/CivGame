@@ -8,13 +8,13 @@ import civ.model.Civilization;
 import civ.model.City;
 import civ.model.Map;
 import civ.model.Tile;
+import civ.model.Unit;
 import civ.view.CivGUI;
 import civ.view.Dialog;
 import java.awt.Point;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.geom.Point2D;
-import javax.swing.JOptionPane;
 import javax.swing.Timer;
 
 /**
@@ -24,9 +24,6 @@ import javax.swing.Timer;
 public class Controller implements Runnable, ActionListener {
 
 	public static final long loopTime = 20000000;
-	public static final int NORMAL = 0;
-	public static final int BUILD = 1;
-	public static final int CITY = 2;
 	// Model
 	private Map map;
 	private int currentPlayer = 0;
@@ -36,12 +33,12 @@ public class Controller implements Runnable, ActionListener {
 	private Point2D cameraPosition;
 	private String status = "Welcome!";
 	private City viewedCity = null;
+	private Unit selectedUnit = null;
 	private Timer statusTimer = new Timer(5000, this);
 	// Other
 	private int turn = 0;
 	private long turnStartTime;
 	// Temp (for simple building)
-	private int mode = NORMAL;
 
 	public Controller(Map map, Civilization[] civilizations, CivGUI gui, Point2D cameraPosition) {
 		this.map = map;
@@ -65,14 +62,6 @@ public class Controller implements Runnable, ActionListener {
 
 	public void setCameraPosition(Point2D cameraPosition) {
 		this.cameraPosition = cameraPosition;
-	}
-
-	public int getMode() {
-		return mode;
-	}
-
-	public void setMode(int mode) {
-		this.mode = mode;
 	}
 
 	public String getStatus() {
@@ -131,6 +120,19 @@ public class Controller implements Runnable, ActionListener {
 
 	public void leaveCity() {
 		viewedCity = null;
+	}
+
+	public Unit getSelectedUnit() {
+		return selectedUnit;
+	}
+	
+	public void selectUnit(Unit unit) {
+		setCameraPosition(unit.getPosition());
+		selectedUnit = unit;
+	}
+	
+	public void deselectUnit() {
+		selectedUnit = null;
 	}
 
 	@Override

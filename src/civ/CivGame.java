@@ -43,11 +43,13 @@ public class CivGame {
 		Unit unit = new Unit(netherlands, Unit.WARRIOR, 2.5, 1, 3);
 		netherlands.addUnit(unit);
 		map.getTile(location).addUnit(unit);
+		unit.setPosition(location);
 		// Create a settler
 		location = new Point(x / 2, y / 2 + 1);
 		unit = new Unit(netherlands, Unit.SETTLER, 2.5, 0, 0);
 		netherlands.addUnit(unit);
 		map.getTile(location).addUnit(unit);
+		unit.setPosition(location);
 
 		// Create the GUI
 		CivGUI gui = new CivGUI();

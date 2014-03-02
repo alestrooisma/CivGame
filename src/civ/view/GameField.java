@@ -1,18 +1,13 @@
 package civ.view;
 
-import civ.controller.Controller;
 import civ.model.Map;
 import civ.model.Tile;
 import civ.controller.Resources;
 import civ.model.City;
-import civ.model.Unit;
 import java.awt.Color;
-import java.awt.Font;
-import java.awt.Graphics;
 import java.awt.Image;
 import java.awt.Point;
 import java.awt.geom.Point2D;
-import javax.swing.JPanel;
 
 /**
  * A panel on which the map is drawn.
@@ -113,7 +108,6 @@ public class GameField extends Panel {
 		g.setColor(Color.RED);
 		g.setFont(boldFont);
 		writeFrameRate();
-		writeMode();
 	}
 
 	private void drawWorldHUD() {
@@ -141,12 +135,6 @@ public class GameField extends Panel {
 	private void writeFrameRate() {
 		calculateFrameRate();
 		g.drawString(String.format("%.0f", framerate), 0, g.getFont().getSize());
-	}
-
-	private void writeMode() {
-		if (gui.getController().getMode() == Controller.BUILD) {
-			g.drawString("BUILD MODE", (int) getSize().getWidth() - 100, g.getFont().getSize() + 10);
-		}
 	}
 
 	private void drawTile(Tile tile) {

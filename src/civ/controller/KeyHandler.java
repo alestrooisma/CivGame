@@ -4,10 +4,11 @@
  */
 package civ.controller;
 
+import civ.model.Unit;
 import civ.view.Dialog;
+import java.awt.Point;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
-import javax.swing.JOptionPane;
 
 /**
  *
@@ -31,7 +32,6 @@ class KeyHandler implements KeyListener {
 			case KeyEvent.VK_ESCAPE:
 				if (controller.getViewedCity() != null) {
 					controller.leaveCity();
-					controller.setMode(Controller.NORMAL);
 				} else {
 					if (Dialog.getConfirmation(controller.getGui().getFrame(),
 							"Are you sure you want to quit the game?")) {
@@ -43,11 +43,9 @@ class KeyHandler implements KeyListener {
 				controller.endTurn();
 				break;
 			case KeyEvent.VK_B:
-				if (controller.getMode() == Controller.NORMAL) {
-					controller.setMode(Controller.BUILD);
-					controller.setStatus("Click anywhere on land to build a city.", false);
-				} else if (controller.getMode() == Controller.BUILD) {
-					controller.setMode(Controller.NORMAL);
+				Unit u = controller.getSelectedUnit();
+				if (u != null && u.getType() == Unit.SETTLER) { 
+					controller.buildCity(new Point(u.getPosition()));
 				}
 				break;
 		}

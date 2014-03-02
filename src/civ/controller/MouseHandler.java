@@ -4,7 +4,6 @@
  */
 package civ.controller;
 
-import civ.model.City;
 import java.awt.Point;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
@@ -24,14 +23,15 @@ class MouseHandler implements MouseListener {
 	@Override
 	public void mouseClicked(MouseEvent e) {
 		Point tileCoords = controller.getGui().windowToTile(e.getPoint());
-		if (controller.getMode() == Controller.BUILD) {
-			controller.buildCity(tileCoords);
-			controller.setMode(Controller.NORMAL);
-		} else if (controller.getMap().getTile(tileCoords).getCity() != null) {
-			controller.setMode(Controller.CITY);
+		if (controller.getMap().getTile(tileCoords).getCity() != null) {
 			controller.enterCity(controller.getMap().getTile(tileCoords).getCity());
 		} else if (controller.getViewedCity() != null) {
 			controller.getViewedCity().toggleWorkedTile(tileCoords);
+		} else if (!controller.getMap().getTile(tileCoords).getUnits().isEmpty()) {
+			controller.selectUnit(controller.getMap().getTile(tileCoords).getUnits().getLast());
+		} else {
+			controller.deselectUnit();
+			controller.leaveCity();
 		}
 	}
 
@@ -50,6 +50,4 @@ class MouseHandler implements MouseListener {
 	@Override
 	public void mouseExited(MouseEvent e) {
 	}
-	
-	
 }
