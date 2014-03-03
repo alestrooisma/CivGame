@@ -28,6 +28,7 @@ class KeyHandler implements KeyListener {
 
 	@Override
 	public void keyPressed(KeyEvent e) {
+		Unit u = controller.getSelectedUnit();
 		switch (e.getKeyCode()) {
 			case KeyEvent.VK_ESCAPE:
 				if (controller.getViewedCity() != null) {
@@ -43,9 +44,13 @@ class KeyHandler implements KeyListener {
 				controller.endTurn();
 				break;
 			case KeyEvent.VK_B:
-				Unit u = controller.getSelectedUnit();
-				if (u != null && u.getType() == Unit.SETTLER) { 
+				if (u != null && u.getType() == Unit.SETTLER) {
 					controller.buildCity(new Point(u.getPosition()));
+				}
+				break;
+			case KeyEvent.VK_G:
+				if (controller.getSelectedUnit() != null) {
+					controller.toggleMoveMode();
 				}
 				break;
 		}

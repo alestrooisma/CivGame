@@ -23,7 +23,9 @@ class MouseHandler implements MouseListener {
 	@Override
 	public void mouseClicked(MouseEvent e) {
 		Point tileCoords = controller.getGui().windowToTile(e.getPoint());
-		if (controller.getMap().getTile(tileCoords).getCity() != null) {
+		if (controller.isInMoveMode()) {
+			controller.moveSelectedUnit(tileCoords);
+		} else if (controller.getMap().getTile(tileCoords).getCity() != null) {
 			controller.enterCity(controller.getMap().getTile(tileCoords).getCity());
 		} else if (controller.getViewedCity() != null) {
 			controller.getViewedCity().toggleWorkedTile(tileCoords);

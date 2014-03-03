@@ -3,6 +3,7 @@ package civ.view;
 import civ.model.Map;
 import civ.model.Tile;
 import civ.controller.Resources;
+import civ.controller.Util;
 import civ.model.City;
 import java.awt.Color;
 import java.awt.Image;
@@ -168,6 +169,14 @@ public class GameField extends Panel {
 //				+ " / " + String.format("%.2f", Util.distance(ZERO, tile.getPosition())),
 //				p.x, p.y);
 
+		if (gui.getController().isInMoveMode()) {
+			double distance = Util.walkDistance(
+					gui.getController().getSelectedUnit().getPosition(),
+					tile.getPosition());
+			if (distance <= gui.getController().getSelectedUnit().getMovesRemaining()) {
+				drawStringTL("" + distance, v, w);
+			}
+		}
 	}
 
 	private void drawImage(Image img) {

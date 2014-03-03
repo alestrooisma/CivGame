@@ -35,6 +35,7 @@ public class Controller implements Runnable, ActionListener {
 	private City viewedCity = null;
 	private Unit selectedUnit = null;
 	private Timer statusTimer = new Timer(5000, this);
+	private boolean moveMode = false;
 	// Other
 	private int turn = 0;
 	private long turnStartTime;
@@ -108,13 +109,15 @@ public class Controller implements Runnable, ActionListener {
 				return;
 			}
 		}
-		City c = new City(civilizations[currentPlayer], name, tile.getPosition());
+		City c = City.createCity(civilizations[currentPlayer], name, tile.getPosition(), map);
 		tile.setCity(c);
+		selectedUnit.destroy(map);
+		deselectUnit();
 		setStatus(name + " founded!", true);
 	}
 
 	public void enterCity(City city) {
-		setCameraPosition(city.getPosition());
+		setCameraPosition(city.getLocation());
 		viewedCity = city;
 	}
 
@@ -132,7 +135,27 @@ public class Controller implements Runnable, ActionListener {
 	}
 	
 	public void deselectUnit() {
+		moveMode = false;
 		selectedUnit = null;
+	}
+
+	public void moveSelectedUnit(Point tileCoords) {
+		double distance = Util.walkDistance(selectedUnit.getPosition(), tileCoords);
+		if (distance <= selectedUnit.getMovesRemaining()) {
+			map.getTile(selectedUnit.getPosition()).removeUnit(selectedUnit);
+			selectedUnit.setPosition(tileCoords);
+			map.getTile(tileCoords).addUnit(selectedUnit);
+			selectedUnit.reduceMoves(distance);
+		}
+		moveMode = false;
+	}
+
+	public void toggleMoveMode() {
+		moveMode = !moveMode;
+	}
+
+	public boolean isInMoveMode() {
+		return moveMode;
 	}
 
 	@Override
@@ -142,6 +165,10 @@ public class Controller implements Runnable, ActionListener {
 	}
 
 	public void endTurn() {
+		// Finalize turn
+		deselectUnit();
+		
+		// Start next player's turn
 		do {
 			currentPlayer = (currentPlayer + 1) % civilizations.length;
 		} while (getCurrentCivilization().isDefeated());
@@ -166,6 +193,12 @@ public class Controller implements Runnable, ActionListener {
 			} else if (c.getFood() < 0) {
 				c.starvation();
 			}
+		}
+		
+		// Update units
+		for (Unit u : civ.getUnits()) {
+			// Reset remaining moves
+			u.resetMoves();
 		}
 	}
 

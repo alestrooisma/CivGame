@@ -31,6 +31,7 @@ public class Unit {
 		this.type = type;
 		this.movesPerTurn = movesPerTurn;
 		this.strength = strength;
+		this.currentHealth = maxHealth;
 		this.maxHealth = maxHealth;
 	}
 
@@ -96,5 +97,19 @@ public class Unit {
 
 	public Civilization getCivilization() {
 		return civilization;
+	}
+	
+	public static Unit createUnit(Civilization civilization, int type, 
+			double movesPerTurn, int strength, int maxHealth, Point position, Map map) {
+		Unit unit = new Unit(civilization, type, movesPerTurn, strength, maxHealth);
+		civilization.addUnit(unit);
+		map.getTile(position).addUnit(unit);
+		unit.setPosition(position);
+		return unit;
+	}
+	
+	public void destroy(Map map) {
+		getCivilization().removeUnit(this);
+		map.getTile(getPosition()).removeUnit(this);
 	}
 }

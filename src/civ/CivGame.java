@@ -34,22 +34,14 @@ public class CivGame {
 		Civilization netherlands = new Civilization("The Netherlands");
 		// Create a city
 		Point location = new Point(x / 2, y / 2);
-		City amsterdam = new City(netherlands, "Amsterdam", location);
+		City amsterdam = City.createCity(netherlands, "Amsterdam", location, map);
 		amsterdam.addFood(amsterdam.getPopulation()); // To prevent starvation in the first turn
-		netherlands.addCity(amsterdam);
-		map.getTile(location).setCity(amsterdam);
 		// Create a warrior
 		location = new Point(location);
-		Unit unit = new Unit(netherlands, Unit.WARRIOR, 2.5, 1, 3);
-		netherlands.addUnit(unit);
-		map.getTile(location).addUnit(unit);
-		unit.setPosition(location);
+		Unit unit = Unit.createUnit(netherlands, Unit.WARRIOR, 2.5, 1, 3, location, map);
 		// Create a settler
 		location = new Point(x / 2, y / 2 + 1);
-		unit = new Unit(netherlands, Unit.SETTLER, 2.5, 0, 0);
-		netherlands.addUnit(unit);
-		map.getTile(location).addUnit(unit);
-		unit.setPosition(location);
+		unit = Unit.createUnit(netherlands, Unit.SETTLER, 2.5, 0, 0, location, map);
 
 		// Create the GUI
 		CivGUI gui = new CivGUI();
