@@ -4,58 +4,93 @@
  */
 package civ.controller;
 
+import civ.controller.input.MainInputHandler;
 import civ.model.Civilization;
 import civ.model.City;
 import civ.model.Map;
+import civ.model.Model;
 import civ.model.Tile;
 import civ.model.Unit;
 import civ.view.CivGUI;
 import civ.view.Dialog;
 import java.awt.Point;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.awt.geom.Point2D;
-import javax.swing.Timer;
 
 /**
  *
  * @author ale
  */
-public class Controller implements Runnable, ActionListener {
+public class Controller implements Runnable{
 
-	public static final long loopTime = 20000000;
-	// Model
-	private Map map;
-	private int currentPlayer = 0;
-	private Civilization[] civilizations;
-	// View
+	private Model model;
 	private CivGUI gui;
-	private Point2D cameraPosition;
-	private String status = "Welcome!";
 	private City viewedCity = null;
 	private Unit selectedUnit = null;
-	private Timer statusTimer = new Timer(5000, this);
-	private boolean moveMode = false;
-	// Other
-	private int turn = 0;
+	// Pending cleanup (i.e. not sure what to do with it)
 	private long turnStartTime;
-	// Temp (for simple building)
+	private boolean moveMode = false;
+	private Point2D cameraPosition;
 
-	public Controller(Map map, Civilization[] civilizations, CivGUI gui, Point2D cameraPosition) {
-		this.map = map;
-		this.civilizations = civilizations;
+	public Controller(Model model, CivGUI gui, Point2D cameraPosition) {
+		this.model = model;
 		this.gui = gui;
 		this.cameraPosition = cameraPosition;
 		Resources.loadResources();
+		MainInputHandler handler = new MainInputHandler(this);
+		gui.attachMouseListener(handler);
+		gui.attachKeyboardListener(handler);
+	}
+
+	@Override
+	public void run() {
+		gui.show();
+		startTurn(getCurrentCivilization());
+		gui.setStatus("Welcome!", true);
+	}
+
+	// Getters
+	public Model getModel() {
+		return model;
 	}
 
 	public CivGUI getGui() {
 		return gui;
 	}
 
-	public Map getMap() {
-		return map;
+	public long getTurnStartTime() {
+		return turnStartTime;
 	}
+
+	// Map wrapper getters
+	public Map getMap() {
+		return model.getMap();
+	}
+
+	public Civilization[] getCivilizations() {
+		return model.getCivilizations();
+	}
+
+	public Civilization getCivilization(int player) {
+		return model.getCivilization(player);
+	}
+
+	public Civilization getCurrentCivilization() {
+		return model.getCurrentCivilization();
+	}
+
+	public int getCurrentPlayer() {
+		return model.getCurrentPlayer();
+	}
+
+	public int getTurn() {
+		return model.getTurn();
+	}
+
+	public City getViewedCity() {
+		return viewedCity;
+	}
+
+	// Controller logic
 
 	public Point2D getCameraPosition() {
 		return cameraPosition;
@@ -63,57 +98,6 @@ public class Controller implements Runnable, ActionListener {
 
 	public void setCameraPosition(Point2D cameraPosition) {
 		this.cameraPosition = cameraPosition;
-	}
-
-	public String getStatus() {
-		return status;
-	}
-
-	public void setStatus(String status, boolean fade) {
-		this.status = status;
-		if (fade) {
-			statusTimer.restart();
-		}
-	}
-
-	public City getViewedCity() {
-		return viewedCity;
-	}
-
-	public Civilization getCurrentCivilization() {
-		return civilizations[currentPlayer];
-	}
-
-	@Override
-	public void run() {
-		gui.attachMouseListener(new MouseHandler(this));
-		gui.attachKeyboardListener(new KeyHandler(this));
-		gui.show();
-		statusTimer.start();
-		startTurn(getCurrentCivilization());
-	}
-
-	public void buildCity(Point position) {
-		Tile tile = getMap().getTile(position);
-		if (tile.getCity() != null || tile.getTerrain() == Tile.WATER) {
-			setStatus("Can't build here", true);
-			return;
-		}
-
-		String name = "";
-		while (name.length() == 0) {
-			name = Dialog.getString(gui.getFrame(), "What do you want your city to be called?");
-
-			if (name == null) {
-				setStatus("Cancelled building.", true);
-				return;
-			}
-		}
-		City c = City.createCity(civilizations[currentPlayer], name, tile.getPosition(), map);
-		tile.setCity(c);
-		selectedUnit.destroy(map);
-		deselectUnit();
-		setStatus(name + " founded!", true);
 	}
 
 	public void enterCity(City city) {
@@ -128,28 +112,52 @@ public class Controller implements Runnable, ActionListener {
 	public Unit getSelectedUnit() {
 		return selectedUnit;
 	}
-	
+
 	public void selectUnit(Unit unit) {
 		setCameraPosition(unit.getPosition());
 		selectedUnit = unit;
 	}
-	
+
 	public void deselectUnit() {
 		moveMode = false;
 		selectedUnit = null;
 	}
 
+	public void buildCity(Point position) {
+		Tile tile = getMap().getTile(position);
+		if (tile.getCity() != null || tile.getTerrain() == Tile.WATER) {
+			gui.setStatus("Can't build here", true);
+			return;
+		}
+
+		String name = "";
+		while (name.length() == 0) {
+			name = Dialog.getString(gui.getFrame(), "What do you want your city to be called?");
+
+			if (name == null) {
+				gui.setStatus("Cancelled building.", true);
+				return;
+			}
+		}
+
+		City c = City.createCity(getCurrentCivilization(), name, tile.getPosition(), getMap());
+		tile.setCity(c);
+		selectedUnit.destroy(getMap());
+		deselectUnit();
+		gui.setStatus(name + " founded!", true);
+	}
+
 	public void moveSelectedUnit(Point tileCoords) {
 		double distance = Util.walkDistance(selectedUnit.getPosition(), tileCoords);
 		if (distance <= selectedUnit.getMovesRemaining()) {
-			map.getTile(selectedUnit.getPosition()).removeUnit(selectedUnit);
+			getMap().getTile(selectedUnit.getPosition()).removeUnit(selectedUnit);
 			selectedUnit.setPosition(tileCoords);
-			map.getTile(tileCoords).addUnit(selectedUnit);
+			getMap().getTile(tileCoords).addUnit(selectedUnit);
 			selectedUnit.reduceMoves(distance);
 		}
 		moveMode = false;
 	}
-
+	
 	public void toggleMoveMode() {
 		moveMode = !moveMode;
 	}
@@ -158,35 +166,26 @@ public class Controller implements Runnable, ActionListener {
 		return moveMode;
 	}
 
-	@Override
-	public void actionPerformed(ActionEvent e) {
-		status = "";
-		statusTimer.stop();
-	}
-
 	public void endTurn() {
 		// Finalize turn
 		deselectUnit();
-		
-		// Start next player's turn
-		do {
-			currentPlayer = (currentPlayer + 1) % civilizations.length;
-		} while (getCurrentCivilization().isDefeated());
 
+		// Start next player's turn
+		model.incrementCurrentPlayer();
 		startTurn(getCurrentCivilization());
 	}
 
 	private void startTurn(Civilization civ) {
-		if (currentPlayer == 0) {
-			turn++;
+		if (getCurrentPlayer() == 0) {
+			model.incrementTurn();
 		}
 		turnStartTime = System.currentTimeMillis();
 
 		// Update cities
 		for (City c : civ.getCities()) {
 			// Production
-			c.addFood(c.getNetFoodYield(map));
-			c.addMaterials(c.getNetMaterialsYield(map));
+			c.addFood(c.getNetFoodYield(getMap()));
+			c.addMaterials(c.getNetMaterialsYield(getMap()));
 			// Growth
 			if (c.getFood() >= c.getGrowsAt()) {
 				c.grow();
@@ -194,19 +193,11 @@ public class Controller implements Runnable, ActionListener {
 				c.starvation();
 			}
 		}
-		
+
 		// Update units
 		for (Unit u : civ.getUnits()) {
 			// Reset remaining moves
 			u.resetMoves();
 		}
-	}
-
-	public int getTurn() {
-		return turn;
-	}
-
-	public long getTurnStartTime() {
-		return turnStartTime;
 	}
 }

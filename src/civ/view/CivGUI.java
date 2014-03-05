@@ -28,9 +28,6 @@ public class CivGUI extends AbstractGUI implements ActionListener {
 	public static final int maxFrameRate = 60;
 	private Timer redrawTimer;
 
-	/**
-	 * Initializes an instance.
-	 */
 	public CivGUI() {
 		super();
 		redrawTimer = new Timer(1000 / maxFrameRate, this);
@@ -99,6 +96,10 @@ public class CivGUI extends AbstractGUI implements ActionListener {
 		frame.addKeyListener(listener);
 	}
 
+	public void setStatus(String status, boolean fade) {
+		gf.setStatus(status, fade);
+	}
+	
 	@Override
 	public void update() {
 		//frame.repaint();

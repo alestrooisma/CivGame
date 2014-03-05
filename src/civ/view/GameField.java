@@ -8,14 +8,17 @@ import civ.model.City;
 import java.awt.Color;
 import java.awt.Image;
 import java.awt.Point;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.awt.geom.Point2D;
+import javax.swing.Timer;
 
 /**
  * A panel on which the map is drawn.
  *
  * @author ale
  */
-public class GameField extends Panel {
+public class GameField extends Panel implements ActionListener {
 
 	/**
 	 * The width and height of a tile. TODO: where to define size? Probably
@@ -29,6 +32,8 @@ public class GameField extends Panel {
 	private int n;
 	private Point offset;
 	private int v, w;
+	private String status = "";
+	private Timer statusTimer = new Timer(5000, this);
 
 	/**
 	 * Creates the {@code GameField} component. Requires a GUI to acquire data
@@ -115,7 +120,7 @@ public class GameField extends Panel {
 		// Status message
 		g.setColor(Color.RED);
 		g.setFont(boldFont);
-		drawStringBC(gui.getController().getStatus(), getWidth() / 2, getHeight() - 50);
+		drawStringBC(getStatus(), getWidth() / 2, getHeight() - 50);
 	}
 
 	private void drawCityScreen(City city) {
@@ -212,6 +217,7 @@ public class GameField extends Panel {
 				(int) Math.ceil((worldCoordinates.getY() - camPos.getY() - 0.5) * TILE_SIZE + 0.5 * getSize().height));
 	}
 
+	// KEEP! might come in use later.
 //	private static int calculateOffset(double pos, double size, double min, double max) {
 //		//TODO change into a worldToCam and camToWorld converter
 //		if ((max - min) * TILE_SIZE < size) {
@@ -239,5 +245,22 @@ public class GameField extends Panel {
 			}
 			this.framerate = var / framerates.length;
 		}
+	}
+
+	public String getStatus() {
+		return status;
+	}
+
+	public void setStatus(String status, boolean fade) {
+		this.status = status;
+		if (fade) {
+			statusTimer.restart();
+		}
+	}
+
+	@Override
+	public void actionPerformed(ActionEvent e) {
+		status = "";
+		statusTimer.stop();
 	}
 }

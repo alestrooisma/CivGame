@@ -4,6 +4,7 @@ import civ.model.Civilization;
 import civ.controller.Controller;
 import civ.model.City;
 import civ.model.Map;
+import civ.model.Model;
 import civ.model.Tile;
 import civ.model.Unit;
 import civ.view.CivGUI;
@@ -50,9 +51,8 @@ public class CivGame {
 			Logger.getLogger(CivGame.class.getName()).log(Level.SEVERE, null, ex);
 		}
 
-		Controller controller = new Controller(map,
-				new Civilization[]{netherlands},
-				gui, new Point2D.Double(x / 2, y / 2));
+		Model model = new Model(map, new Civilization[]{netherlands});
+		Controller controller = new Controller(model, gui, new Point2D.Double(x / 2, y / 2));
 		gui.setController(controller);
 		controller.run();
 	}
