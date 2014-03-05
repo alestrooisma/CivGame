@@ -1,27 +1,18 @@
-/*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
- */
 package civ.view;
 
-import civ.controller.Resources;
 import civ.model.City;
 import civ.model.Map;
-import civ.model.Tile;
 import java.awt.Color;
 import java.awt.Dimension;
-import java.awt.Point;
+import javax.swing.BorderFactory;
 
-/**
- *
- * @author ale
- */
 public class CityScreenPanel extends Panel {
 
 	public CityScreenPanel(CivGUI gui) {
 		super(gui);
 		setPreferredSize(new Dimension(250, 250));
 		setBackground(Color.GRAY);
+		setBorder(BorderFactory.createLineBorder(Color.BLACK, 2));
 		setVisible(false);
 	}
 
@@ -35,16 +26,8 @@ public class CityScreenPanel extends Panel {
 			drawCityScreen(gui.getController().getViewedCity());
 		}
 	}
-	
+
 	private void drawCityScreen(City city) {
-
-		//TODO separate panel
-
-		// Draw bottom bar background
-//		g.setColor(Color.GRAY);
-//		g.fillRect(0, getSize().height - CITY_BAR_HEIGHT, getSize().width - 1, CITY_BAR_HEIGHT - 1);
-//		g.setColor(Color.BLACK);
-//		g.drawRect(0, getSize().height - CITY_BAR_HEIGHT, getSize().width - 1, CITY_BAR_HEIGHT - 1);
 
 		// Draw text on bar
 		Map map = gui.getController().getMap();
@@ -87,5 +70,4 @@ public class CityScreenPanel extends Panel {
 		drawStringTL("Materials:", x1, y);
 		drawStringTL("" + city.getMaterials(), x2, y);
 	}
-
 }
