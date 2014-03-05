@@ -18,7 +18,7 @@ import javax.swing.Timer;
  *
  * @author ale
  */
-public class GameField extends Panel implements ActionListener {
+public class GameField extends Panel {
 
 	/**
 	 * The width and height of a tile. TODO: where to define size? Probably
@@ -33,7 +33,8 @@ public class GameField extends Panel implements ActionListener {
 	private Point offset;
 	private int v, w;
 	private String status = "";
-	private Timer statusTimer = new Timer(5000, this);
+	private boolean fadeStatus = false;
+	private long statusTime;
 
 	/**
 	 * Creates the {@code GameField} component. Requires a GUI to acquire data
@@ -95,15 +96,7 @@ public class GameField extends Panel implements ActionListener {
 	private void drawGeneralHUD() {
 		// New turn message
 		long dt = System.currentTimeMillis() - gui.getController().getTurnStartTime();
-		float delay = 0.5f;
-		float fade = 1f;
-		if (dt < (delay + fade) * 1000) {
-			if (dt < delay * 1000) {
-				g.setColor(Color.BLACK);
-			} else {
-				float alpha = (delay + fade) - ((float) dt / (fade * 1000));
-				g.setColor(new Color(0, 0, 0, alpha));
-			}
+		if (getFadeColor(0, 0, 0, 0.5f, 1, dt)) {
 			g.setFont(boldFont.deriveFont(50f));
 			drawStringBC(gui.getController().getCurrentCivilization().getName(), getWidth() / 2, 250);
 			g.setFont(normalFont.deriveFont(30f));
@@ -118,7 +111,17 @@ public class GameField extends Panel implements ActionListener {
 
 	private void drawWorldHUD() {
 		// Status message
-		g.setColor(Color.RED);
+		if (fadeStatus) {
+			if (getFadeColor(1, 0, 0, 4.5f, 0.5f, System.currentTimeMillis() - statusTime)) {
+				writeStatus();
+			}
+		} else {
+			g.setColor(Color.RED);
+			writeStatus();
+		}
+	}
+
+	private void writeStatus() {
 		g.setFont(boldFont);
 		drawStringBC(getStatus(), getWidth() / 2, getHeight() - 50);
 	}
@@ -253,14 +256,7 @@ public class GameField extends Panel implements ActionListener {
 
 	public void setStatus(String status, boolean fade) {
 		this.status = status;
-		if (fade) {
-			statusTimer.restart();
-		}
-	}
-
-	@Override
-	public void actionPerformed(ActionEvent e) {
-		status = "";
-		statusTimer.stop();
+		this.fadeStatus = fade;
+		this.statusTime = System.currentTimeMillis();
 	}
 }

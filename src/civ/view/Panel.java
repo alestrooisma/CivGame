@@ -1,6 +1,7 @@
 package civ.view;
 
 import java.awt.BorderLayout;
+import java.awt.Color;
 import java.awt.Font;
 import java.awt.Graphics;
 import java.awt.Image;
@@ -38,10 +39,10 @@ public abstract class Panel extends JPanel {
 
 		normalFont = g.getFont();
 		boldFont = normalFont.deriveFont(Font.BOLD);
-		
+
 		render();
 	}
-	
+
 	protected abstract void render();
 
 	protected void drawImage(Image img, int x, int y) {
@@ -82,5 +83,22 @@ public abstract class Panel extends JPanel {
 
 	protected void drawStringBR(String str, int x, int y) {
 		drawStringBL(str, x - g.getFontMetrics().stringWidth(str), y);
+	}
+
+	public boolean getFadeColor(float r, float g, float b, float delay, float fade, float dt) {
+		if (dt < (delay + fade) * 1000) {
+			if (dt < delay * 1000) {
+				this.g.setColor(new Color(r, g, b, 1));
+			} else {
+				float alpha = (delay + fade) / fade - (dt / (fade * 1000));
+				if (r == 1) {
+					System.out.println("" + dt + ": " + alpha + " = " + ((delay + fade) / fade) + " - " + (dt / (fade * 1000)));
+				}
+				this.g.setColor(new Color(r, g, b, alpha));
+			}
+			return true;
+		} else {
+			return false;
+		}
 	}
 }
