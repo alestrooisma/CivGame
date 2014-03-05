@@ -18,9 +18,6 @@ public class CivGame {
 
 	private static Random rand = new Random(123456789);
 
-	/**
-	 * @param args the command line arguments
-	 */
 	public static void main(String[] args) {
 
 		// Create the map

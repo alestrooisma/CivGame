@@ -55,6 +55,6 @@ public class Tile {
 	}
 	
 	public void removeUnit(Unit unit) {
-		System.out.println(units.remove(unit));
+		units.remove(unit);
 	}
 }
