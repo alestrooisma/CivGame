@@ -5,6 +5,7 @@ import java.awt.Color;
 import java.awt.Font;
 import java.awt.Graphics;
 import java.awt.Image;
+import java.awt.LayoutManager;
 import java.awt.Point;
 import javax.swing.JPanel;
 
@@ -21,12 +22,6 @@ public abstract class Panel extends JPanel {
 	protected Font normalFont;
 	protected Font boldFont;
 
-	/**
-	 * Creates the {@code GameField} component. Requires a GUI to acquire data
-	 * through.
-	 *
-	 * @param gui the GUI this component is part of
-	 */
 	public Panel(CivGUI gui) {
 		super(new BorderLayout());
 		this.gui = gui;
@@ -91,9 +86,6 @@ public abstract class Panel extends JPanel {
 				this.g.setColor(new Color(r, g, b, 1));
 			} else {
 				float alpha = (delay + fade) / fade - (dt / (fade * 1000));
-				if (r == 1) {
-					System.out.println("" + dt + ": " + alpha + " = " + ((delay + fade) / fade) + " - " + (dt / (fade * 1000)));
-				}
 				this.g.setColor(new Color(r, g, b, alpha));
 			}
 			return true;
