@@ -5,6 +5,7 @@
 package civ.controller;
 
 import civ.controller.input.MainInputHandler;
+import civ.model.Building;
 import civ.model.Civilization;
 import civ.model.City;
 import civ.model.Map;
@@ -141,7 +142,8 @@ public class Controller implements Runnable{
 		}
 
 		City c = City.createCity(getCurrentCivilization(), name, tile.getPosition(), getMap());
-		tile.setCity(c);
+		c.addBuilding(new Building("Construction site"));
+		c.addBuilding(new Building("Training field"));
 		selectedUnit.destroy(getMap());
 		deselectUnit();
 		gui.setStatus(name + " founded!", true);

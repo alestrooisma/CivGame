@@ -18,8 +18,8 @@ public class City {
 	private Point location;
 	private Civilization civilization;
 	private int population;
-	private LinkedList<Point> workedTiles = new LinkedList<Point>();
-	private LinkedList<Building> buildings = new LinkedList<Building>();
+	private LinkedList<Point> workedTiles;
+	private LinkedList<Building> buildings;
 	//Temp
 	private int food;
 	private int materials;
@@ -29,8 +29,9 @@ public class City {
 		this.name = name;
 		this.location = location;
 		this.population = 3;
-		buildings.add(new Building("Construction site"));
-		buildings.add(new Building("Training field"));
+		
+		workedTiles = new LinkedList<Point>();
+		buildings = new LinkedList<Building>();
 	}
 
 	public void setName(String name) {
