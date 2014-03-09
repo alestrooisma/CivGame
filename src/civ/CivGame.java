@@ -2,6 +2,7 @@ package civ;
 
 import civ.model.Civilization;
 import civ.controller.Controller;
+import civ.model.Building;
 import civ.model.City;
 import civ.model.Map;
 import civ.model.Model;
@@ -10,10 +11,7 @@ import civ.model.Unit;
 import civ.view.CivGUI;
 import java.awt.Point;
 import java.awt.geom.Point2D;
-import java.lang.reflect.InvocationTargetException;
 import java.util.Random;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 public class CivGame {
 
@@ -34,6 +32,9 @@ public class CivGame {
 		Point location = new Point(x / 2, y / 2);
 		City amsterdam = City.createCity(netherlands, "Amsterdam", location, map);
 		amsterdam.addFood(amsterdam.getPopulation()); // To prevent starvation in the first turn
+		// Add starting buildings
+		amsterdam.addBuilding(new Building("Construction site"));
+		amsterdam.addBuilding(new Building("Training field"));
 		// Create a warrior
 		location = new Point(location);
 		Unit unit = Unit.createUnit(netherlands, Unit.WARRIOR, 2.5, 1, 3, location, map);
@@ -43,14 +44,6 @@ public class CivGame {
 
 		// Create the GUI
 		CivGUI gui = new CivGUI();
-		try {
-			gui.buildGuiAndWait();
-		} catch (InterruptedException ex) {
-			Logger.getLogger(CivGame.class.getName()).log(Level.SEVERE, null, ex);
-		} catch (InvocationTargetException ex) {
-			Logger.getLogger(CivGame.class.getName()).log(Level.SEVERE, null, ex);
-		}
-
 		Model model = new Model(map, new Civilization[]{netherlands});
 		Controller controller = new Controller(model, gui, new Point2D.Double(x / 2, y / 2));
 		gui.setController(controller);

@@ -1,6 +1,7 @@
 package civ.view;
 
 import civ.controller.Controller;
+import civ.controller.input.MainInputHandler;
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Dimension;
@@ -50,6 +51,11 @@ public class CivGUI extends AbstractGUI implements ActionListener {
 		// Add everything
 		frame.add(gf, BorderLayout.CENTER);
 		gf.add(cityScreenPanel, BorderLayout.PAGE_END);
+		
+		// Add main input handler
+		MainInputHandler handler = new MainInputHandler(controller);
+		frame.addKeyListener(handler);
+		gf.addMouseListener(handler);
 
 		// Start drawing
 		frame.pack();

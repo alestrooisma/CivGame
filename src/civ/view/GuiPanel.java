@@ -85,6 +85,7 @@ public abstract class GuiPanel extends Panel {
 	protected void newColumn(int x) {
 		this.x = x;
 		y = padY;
+		lineX = x;
 	}
 
 	protected void newLine(int y) {

@@ -15,7 +15,6 @@ public class BuildingListMouseHandler extends AbstractMouseHandler {
 
 	@Override
 	public void mousePressed(MouseEvent e) {
-		System.out.println(e.getPoint());
 		if (e.getX() > panel.getPadX() && e.getX() < panel.getWidth() - panel.getPadX()) {
 
 			int Y = panel.getRectHeight() + BuildingPanel.SPACING;

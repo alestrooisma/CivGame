@@ -81,7 +81,7 @@ public class CityScreenPanel extends GuiPanel {
 			if (c == null) {
 				return;
 			}
-			
+
 			for (Building b : c.getBuildings()) {
 				startRect();
 				writeln(b.getName(), boldFont);
