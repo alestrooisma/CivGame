@@ -109,6 +109,7 @@ public class MainInputHandler extends AbstractInputHandler implements ActionList
 
 	@Override
 	public void actionPerformed(ActionEvent e) {
+		popupShown = false;
 		if (e.getActionCommand().equals("C")) {
 			controller.enterCity(tile.getCity());
 		} else {

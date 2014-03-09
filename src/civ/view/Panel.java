@@ -57,15 +57,15 @@ public abstract class Panel extends JPanel {
 	}
 
 	protected void drawStringML(String str, int x, int y) {
-		g.drawString(str, x, y + g.getFontMetrics().getHeight() / 2);
+		drawStringBL(str, x, y + g.getFontMetrics().getHeight() / 2);
 	}
 
 	protected void drawStringMC(String str, int x, int y) {
-		drawStringBL(str, x - g.getFontMetrics().stringWidth(str) / 2, y);
+		drawStringML(str, x - g.getFontMetrics().stringWidth(str) / 2, y);
 	}
 
 	protected void drawStringMR(String str, int x, int y) {
-		drawStringBL(str, x - g.getFontMetrics().stringWidth(str), y);
+		drawStringML(str, x - g.getFontMetrics().stringWidth(str), y);
 	}
 
 	protected void drawStringBL(String str, int x, int y) {

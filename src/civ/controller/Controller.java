@@ -12,6 +12,8 @@ import civ.model.Map;
 import civ.model.Model;
 import civ.model.Tile;
 import civ.model.Unit;
+import civ.placeholder.ConstructionSite;
+import civ.placeholder.TrainingField;
 import civ.view.CivGUI;
 import civ.view.Dialog;
 import java.awt.Point;
@@ -149,8 +151,8 @@ public class Controller implements Runnable{
 		}
 
 		City c = City.createCity(getCurrentCivilization(), name, tile.getPosition(), getMap());
-		c.addBuilding(new Building("Construction site"));
-		c.addBuilding(new Building("Training field"));
+		c.addBuilding(new ConstructionSite(c, "Construction site"));
+		c.addBuilding(new TrainingField(c, "Training field"));
 		selectedUnit.destroy(getMap());
 		deselectUnit();
 		gui.setStatus(name + " founded!", true);

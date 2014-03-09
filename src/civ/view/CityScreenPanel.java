@@ -7,6 +7,10 @@ import civ.model.Map;
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Dimension;
+import java.awt.Graphics2D;
+import java.awt.Rectangle;
+import java.awt.font.FontRenderContext;
+import java.awt.font.GlyphVector;
 import javax.swing.BorderFactory;
 
 public class CityScreenPanel extends GuiPanel {
@@ -66,7 +70,8 @@ public class CityScreenPanel extends GuiPanel {
 
 		public static final int SPACING = 10;
 		public static final int PADDING = 5;
-		private int rectHeight = getFontMetrics(getFont()).getHeight() * 3 + PADDING;
+		private int rectHeight;
+		private Rectangle selectButton = new Rectangle();
 		private int yRect;
 
 		public BuildingPanel(CivGUI gui, int padX, int padY) {
@@ -77,32 +82,75 @@ public class CityScreenPanel extends GuiPanel {
 
 		@Override
 		protected void renderGUI() {
+			calculateValues();
 			City c = gui.getController().getViewedCity();
 			if (c == null) {
 				return;
 			}
 
 			for (Building b : c.getBuildings()) {
-				startRect();
+				String production = b.getProduction();
+				if (production == null) {
+					production = "Idle";
+				} else {
+					production = "Producing: " + production;
+				}
+				
+				startItem(b);
 				writeln(b.getName(), boldFont);
-				writeln("Idle.");
-				endRect();
+				writeln(production);
+				endItem();
 			}
 		}
 
-		private void startRect() {
+		private void startItem(Building b) {
+			// Draw border
 			g.drawRect(getPadX(), y, getWidth() - 2 * getPadX(), rectHeight);
+
+			// Draw select button
+			if (b.isProducer()) {
+				g.setColor(Color.GRAY);
+				g.fillRect(selectButton.x, y + selectButton.y,
+						selectButton.width, selectButton.height);
+				g.setColor(Color.BLACK);
+				g.drawRect(selectButton.x, y + selectButton.y,
+						selectButton.width, selectButton.height);
+				drawStringBC("S", selectButton.x + selectButton.width / 2,
+						y + selectButton.y + (selectButton.height + getStringHeight("S")) / 2 + 1);
+			}
+
+			// Set positions
 			yRect = y;
 			x += PADDING;
 			lineX += PADDING;
 		}
 
-		private void endRect() {
+		private void endItem() {
+			// Reset positions
 			newLine(yRect + rectHeight + SPACING);
 		}
 
 		public int getRectHeight() {
 			return rectHeight;
+		}
+
+		public Rectangle getSelectButton() {
+			return selectButton;
+		}
+
+		private void calculateValues() {
+			rectHeight = g.getFontMetrics().getHeight() * 3 + PADDING;
+			int buttonSize = rectHeight / 3;
+			selectButton.setBounds(
+					getWidth() - getPadX() - buttonSize,
+					(rectHeight - buttonSize) / 2,
+					buttonSize, buttonSize);
+		}
+
+		private int getStringHeight(String str) {
+			FontRenderContext frc = ((Graphics2D) g).getFontRenderContext();
+			GlyphVector gv = ((Graphics2D) g).getFont().createGlyphVector(frc, str);
+			return gv.getPixelBounds(null, 0, 0).height;
 		}
 	}
 }
