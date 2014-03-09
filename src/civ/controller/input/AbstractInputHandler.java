@@ -10,12 +10,10 @@ import java.awt.event.MouseListener;
  * Just a convenience class
  * @author Ale Strooisma
  */
-public class AbstractInputHandler implements KeyListener, MouseListener {
-
-	protected Controller controller;
+public abstract class AbstractInputHandler extends AbstractMouseHandler implements KeyListener, MouseListener {
 
 	public AbstractInputHandler(Controller controller) {
-		this.controller = controller;
+		super(controller);
 	}
 	
 	@Override
@@ -29,25 +27,4 @@ public class AbstractInputHandler implements KeyListener, MouseListener {
 	@Override
 	public void keyReleased(KeyEvent e) {
 	}
-
-	@Override
-	public void mouseClicked(MouseEvent e) {
-	}
-
-	@Override
-	public void mousePressed(MouseEvent e) {
-	}
-
-	@Override
-	public void mouseReleased(MouseEvent e) {
-	}
-
-	@Override
-	public void mouseEntered(MouseEvent e) {
-	}
-
-	@Override
-	public void mouseExited(MouseEvent e) {
-	}
-	
 }

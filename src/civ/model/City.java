@@ -19,7 +19,7 @@ public class City {
 	private Civilization civilization;
 	private int population;
 	private LinkedList<Point> workedTiles = new LinkedList<Point>();
-	
+	private LinkedList<Building> buildings = new LinkedList<Building>();
 	//Temp
 	private int food;
 	private int materials;
@@ -29,6 +29,8 @@ public class City {
 		this.name = name;
 		this.location = location;
 		this.population = 3;
+		buildings.add(new Building("Construction site"));
+		buildings.add(new Building("Training field"));
 	}
 
 	public void setName(String name) {
@@ -81,6 +83,22 @@ public class City {
 		return workedTiles;
 	}
 
+	public void addBuilding(Building b) {
+		buildings.add(b);
+	}
+
+	public LinkedList<Building> getBuildings() {
+		return buildings;
+	}
+
+	public Building getBuilding(int i) {
+		if (i < buildings.size()) {
+			return buildings.get(i);
+		} else {
+			return null;
+		}
+	}
+
 	public int getFood() {
 		return food;
 	}
@@ -90,15 +108,15 @@ public class City {
 	}
 
 	public int getNetFoodYield(Map map) {
-		return getFoodYield(map)-population;
+		return getFoodYield(map) - population;
 	}
 
 	public int getFoodYield(Map map) {
 		int yield = 0;
 		for (Point p : getWorkedTiles()) {
-				Tile t = map.getTile(p);
-				yield += t.getFoodYield();
-			}
+			Tile t = map.getTile(p);
+			yield += t.getFoodYield();
+		}
 		return yield;
 	}
 
@@ -109,9 +127,9 @@ public class City {
 	public int getMaterialsYield(Map map) {
 		int yield = 0;
 		for (Point p : getWorkedTiles()) {
-				Tile t = map.getTile(p);
-				yield += t.getMaterialsYield();
-			}
+			Tile t = map.getTile(p);
+			yield += t.getMaterialsYield();
+		}
 		return yield;
 	}
 
@@ -132,7 +150,7 @@ public class City {
 	}
 
 	public int getGrowsAt() {
-		return Math.max(10, (population - 2) * 10); 
+		return Math.max(10, (population - 2) * 10);
 	}
 
 	public void grow() {
@@ -144,16 +162,16 @@ public class City {
 		food = 0;
 		population--;
 	}
-	
+
+	public void destroy(Map map) {
+		getCivilization().removeCity(this);
+		map.getTile(getLocation()).setCity(null);
+	}
+
 	public static City createCity(Civilization civilization, String name, Point location, Map map) {
 		City city = new City(civilization, name, location);
 		civilization.addCity(city);
 		map.getTile(location).setCity(city);
 		return city;
-	}
-	
-	public void destroy(Map map) {
-		getCivilization().removeCity(this);
-		map.getTile(getLocation()).setCity(null);
 	}
 }

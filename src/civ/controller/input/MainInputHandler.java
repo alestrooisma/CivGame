@@ -25,10 +25,10 @@ public class MainInputHandler extends AbstractInputHandler {
 				if (controller.getViewedCity() != null) {
 					controller.leaveCity();
 				} else {
-					if (Dialog.getConfirmation(controller.getGui().getFrame(),
-							"Are you sure you want to quit the game?")) {
+//					if (Dialog.getConfirmation(controller.getGui().getFrame(),
+//							"Are you sure you want to quit the game?")) {
 						System.exit(0);
-					}
+//					}
 				}
 				break;
 			case KeyEvent.VK_ENTER:
