@@ -4,6 +4,7 @@
  */
 package civ.model;
 
+import civ.controller.Controller;
 import civ.controller.Util;
 import java.awt.Point;
 import java.util.LinkedList;
@@ -12,7 +13,7 @@ import java.util.LinkedList;
  *
  * @author ale
  */
-public class City {
+public class City implements ModelElement {
 
 	private String name;
 	private Point location;
@@ -29,7 +30,7 @@ public class City {
 		this.name = name;
 		this.location = location;
 		this.population = 3;
-		
+
 		workedTiles = new LinkedList<Point>();
 		buildings = new LinkedList<Building>();
 	}
@@ -154,16 +155,6 @@ public class City {
 		return Math.max(10, (population - 2) * 10);
 	}
 
-	public void grow() {
-		reduceFood(getGrowsAt());
-		population++;
-	}
-
-	public void starvation() {
-		food = 0;
-		population--;
-	}
-
 	public void destroy(Map map) {
 		getCivilization().removeCity(this);
 		map.getTile(getLocation()).setCity(null);
@@ -174,5 +165,27 @@ public class City {
 		civilization.addCity(city);
 		map.getTile(location).setCity(city);
 		return city;
+	}
+
+	@Override
+	public void update(Controller controller) {
+		// Production
+		addFood(getNetFoodYield(controller.getMap()));
+		addMaterials(getNetMaterialsYield(controller.getMap()));
+		
+		// Buildings
+		int n = buildings.size(); // Because a building can add another one
+		for (int i = 0; i < n; i++) {
+			buildings.get(i).update(controller);
+		}
+		
+		// Growth
+		if (getFood() >= getGrowsAt()) {
+			reduceFood(getGrowsAt());
+			population++;
+		} else if (getFood() < 0) {
+			food = 0;
+			population--;
+		}
 	}
 }

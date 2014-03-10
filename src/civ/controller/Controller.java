@@ -194,21 +194,13 @@ public class Controller implements Runnable{
 
 		// Update cities
 		for (City c : civ.getCities()) {
-			// Production
-			c.addFood(c.getNetFoodYield(getMap()));
-			c.addMaterials(c.getNetMaterialsYield(getMap()));
-			// Growth
-			if (c.getFood() >= c.getGrowsAt()) {
-				c.grow();
-			} else if (c.getFood() < 0) {
-				c.starvation();
-			}
+			c.update(this);
 		}
 
 		// Update units
 		for (Unit u : civ.getUnits()) {
 			// Reset remaining moves
-			u.resetMoves();
+			u.update(this);
 		}
 	}
 }

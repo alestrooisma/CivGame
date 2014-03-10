@@ -4,13 +4,14 @@
  */
 package civ.model;
 
+import civ.controller.Controller;
 import java.util.List;
 
 /**
  *
  * @author ale
  */
-public class Building {
+public class Building implements ModelElement {
 
 	private City city;
 	private String name;
@@ -43,5 +44,9 @@ public class Building {
 
 	public void setProduction(String production) {
 		this.production = production;
+	}
+
+	@Override
+	public void update(Controller controller) {
 	}
 }

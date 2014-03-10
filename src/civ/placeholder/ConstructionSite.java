@@ -4,6 +4,7 @@
  */
 package civ.placeholder;
 
+import civ.controller.Controller;
 import civ.model.Building;
 import civ.model.City;
 import java.util.Arrays;
@@ -37,5 +38,10 @@ public class ConstructionSite extends Building {
 	@Override
 	public boolean isProducer() {
 		return true;
+	}
+
+	@Override
+	public void update(Controller controller) {
+		
 	}
 }

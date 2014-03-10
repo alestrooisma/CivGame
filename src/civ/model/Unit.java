@@ -4,13 +4,14 @@
  */
 package civ.model;
 
+import civ.controller.Controller;
 import java.awt.Point;
 
 /**
  *
  * @author ale
  */
-public class Unit {
+public class Unit implements ModelElement {
 	
 	// Types
 	public static final int SETTLER = 0;
@@ -111,5 +112,10 @@ public class Unit {
 	public void destroy(Map map) {
 		getCivilization().removeUnit(this);
 		map.getTile(getPosition()).removeUnit(this);
+	}
+
+	@Override
+	public void update(Controller controller) {
+		resetMoves();
 	}
 }
