@@ -1,9 +1,10 @@
 package civ.view;
 
 import civ.controller.input.BuildingListMouseHandler;
-import civ.model.Building;
+import civ.model.buildings.Building;
 import civ.model.City;
 import civ.model.Map;
+import civ.model.buildings.ProductionBuilding;
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Dimension;
@@ -98,7 +99,16 @@ public class CityScreenPanel extends GuiPanel {
 				
 				startItem(b);
 				writeln(b.getName(), boldFont);
-				writeln(production);
+				if (b instanceof ProductionBuilding) {
+					writeln(production);
+				}
+				if (b.getFoodBalance() != 0) {
+					write(String.format("%+d Food", b.getFoodBalance()));
+				}
+				if (b.getMaterialsBalance() != 0) {
+					write(String.format("%+d Materials", b.getMaterialsBalance()));
+				}
+				writeln();
 				endItem();
 			}
 		}
@@ -108,7 +118,7 @@ public class CityScreenPanel extends GuiPanel {
 			g.drawRect(getPadX(), y, getWidth() - 2 * getPadX(), rectHeight);
 
 			// Draw select button
-			if (b.isProducer()) {
+			if (b instanceof ProductionBuilding) {
 				g.setColor(Color.GRAY);
 				g.fillRect(selectButton.x, y + selectButton.y,
 						selectButton.width, selectButton.height);

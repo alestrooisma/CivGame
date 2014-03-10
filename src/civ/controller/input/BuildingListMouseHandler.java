@@ -1,7 +1,7 @@
 package civ.controller.input;
 
 import civ.controller.Controller;
-import civ.model.Building;
+import civ.model.buildings.Building;
 import civ.view.CityScreenPanel.BuildingPanel;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;

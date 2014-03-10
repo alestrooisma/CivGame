@@ -4,7 +4,7 @@
  */
 package civ.placeholder;
 
-import civ.model.Building;
+import civ.model.buildings.Building;
 import civ.model.City;
 import java.util.Arrays;
 import java.util.List;
@@ -24,10 +24,5 @@ public class TrainingField extends Building {
 	@Override
 	public List<String> getProductionOptions() {
 		return options;
-	}
-
-	@Override
-	public boolean isProducer() {
-		return true;
 	}
 }

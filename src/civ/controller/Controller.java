@@ -5,13 +5,14 @@
 package civ.controller;
 
 import civ.CivGame;
-import civ.model.Building;
+import civ.model.buildings.Building;
 import civ.model.Civilization;
 import civ.model.City;
 import civ.model.Map;
 import civ.model.Model;
 import civ.model.Tile;
 import civ.model.Unit;
+import civ.model.buildings.ProductionBuilding;
 import civ.placeholder.ConstructionSite;
 import civ.placeholder.TrainingField;
 import civ.view.CivGUI;
@@ -151,8 +152,8 @@ public class Controller implements Runnable{
 		}
 
 		City c = City.createCity(getCurrentCivilization(), name, tile.getPosition(), getMap());
-		c.addBuilding(new ConstructionSite(c, "Construction site"));
-		c.addBuilding(new TrainingField(c, "Training field"));
+		c.addBuilding(new ProductionBuilding(c, "Construction site"));
+		c.addBuilding(new ProductionBuilding(c, "Training field"));
 		selectedUnit.destroy(getMap());
 		deselectUnit();
 		gui.setStatus(name + " founded!", true);

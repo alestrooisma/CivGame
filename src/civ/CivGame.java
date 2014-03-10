@@ -7,6 +7,7 @@ import civ.model.Map;
 import civ.model.Model;
 import civ.model.Tile;
 import civ.model.Unit;
+import civ.model.buildings.ProductionBuilding;
 import civ.placeholder.ConstructionSite;
 import civ.placeholder.TrainingField;
 import civ.view.CivGUI;
@@ -34,8 +35,8 @@ public class CivGame {
 		City amsterdam = City.createCity(netherlands, "Amsterdam", location, map);
 		amsterdam.addFood(amsterdam.getPopulation()); // To prevent starvation in the first turn
 		// Add starting buildings
-		amsterdam.addBuilding(new ConstructionSite(amsterdam, "Construction site"));
-		amsterdam.addBuilding(new TrainingField(amsterdam, "Training field"));
+		amsterdam.addBuilding(new ProductionBuilding(amsterdam, "Construction site"));
+		amsterdam.addBuilding(new ProductionBuilding(amsterdam, "Training field"));
 		// Create a warrior
 		location = new Point(location);
 		Unit unit = Unit.createUnit(netherlands, Unit.WARRIOR, 2.5, 1, 3, location, map);

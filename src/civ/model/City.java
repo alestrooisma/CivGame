@@ -4,6 +4,7 @@
  */
 package civ.model;
 
+import civ.model.buildings.Building;
 import civ.controller.Controller;
 import civ.controller.Util;
 import java.awt.Point;
