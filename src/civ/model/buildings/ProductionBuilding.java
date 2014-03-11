@@ -57,11 +57,11 @@ public class ProductionBuilding extends Building {
 			
 			int consumption;
 			consumption = -getMaterialsBalance();
-			if (getCity().getMaterials() < consumption) {
-				consumption = getCity().getMaterials();
-			}
+//			if (getCity().getMaterials() < consumption) {
+//				consumption = getCity().getMaterials();
+//			}
 
-			getCity().reduceMaterials(consumption);
+//			getCity().reduceMaterials(consumption);
 			materials += consumption;
 
 			int cost = costs.get(options.indexOf(getProduction()));

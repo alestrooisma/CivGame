@@ -17,7 +17,7 @@ import java.util.Random;
 
 public class CivGame {
 
-	private static Random rand = new Random(123456789);
+	private static Random rand = new Random(12345678);
 
 	public static void main(String[] args) {
 

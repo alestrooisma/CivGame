@@ -31,6 +31,8 @@ public class MainInputHandler extends AbstractInputHandler implements ActionList
 			case KeyEvent.VK_ESCAPE:
 				if (controller.getViewedCity() != null) {
 					controller.leaveCity();
+				} else if (controller.getSelectedUnit() != null) {
+					controller.deselectUnit();
 				} else {
 //					if (Dialog.getConfirmation(controller.getGui().getFrame(),
 //							"Are you sure you want to quit the game?")) {

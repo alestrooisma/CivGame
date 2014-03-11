@@ -110,10 +110,6 @@ public class City implements ModelElement {
 		return materials;
 	}
 
-	public int getNetFoodYield(Map map) {
-		return getFoodYield(map) - population;
-	}
-
 	public int getFoodYield(Map map) {
 		int yield = 0;
 		for (Point p : getWorkedTiles()) {
@@ -121,10 +117,6 @@ public class City implements ModelElement {
 			yield += t.getFoodYield();
 		}
 		return yield;
-	}
-
-	public int getNetMaterialsYield(Map map) {
-		return getMaterialsYield(map);
 	}
 
 	public int getMaterialsYield(Map map) {
@@ -136,6 +128,30 @@ public class City implements ModelElement {
 		return yield;
 	}
 
+	public int getFoodBalance(Map map) {
+		int balance = 0;
+		for (Building b : buildings) {
+			balance += b.getFoodBalance();
+		}
+		return balance;
+	}
+
+	public int getMaterialsBalance(Map map) {
+		int balance = 0;
+		for (Building b : buildings) {
+			balance += b.getMaterialsBalance();
+		}
+		return balance;
+	}
+
+	public int getNetFoodYield(Map map) {
+		return getFoodYield(map) + getFoodBalance(map) - population;
+	}
+
+	public int getNetMaterialsYield(Map map) {
+		return getMaterialsYield(map) + getMaterialsBalance(map);
+	}
+	
 	public void addFood(int food) {
 		this.food += food;
 	}

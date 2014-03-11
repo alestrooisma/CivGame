@@ -68,7 +68,7 @@ public class Building implements ModelElement {
 	
 	@Override
 	public void update(Controller controller) {
-		city.addFood(getFoodBalance());
-		city.addMaterials(getMaterialsBalance());
+//		city.addFood(getFoodBalance());
+//		city.addMaterials(getMaterialsBalance());
 	}
 }
