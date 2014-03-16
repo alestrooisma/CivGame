@@ -47,6 +47,37 @@ public class Map {
 	}
 
 	/**
+	 * Creates a new instance of map with the given dimensions and tiles, 
+	 * setting the lower coordinate bounds to 0.
+	 *
+	 * @param width the width of the map
+	 * @param height the height of the map
+	 * @param tiles the tiles to be on the map
+	 */
+	public Map(int width, int height, Tile[] tiles) {
+		this.minX = 0;
+		this.maxX = width - 1;
+		this.minY = 0;
+		this.maxY = height - 1;
+		this.tiles = tiles;
+	}
+
+	/**
+	 * Creates a new instance of map with the given dimensions, setting the 
+	 * lower coordinate bounds to 0.
+	 *
+	 * @param width the width of the map
+	 * @param height the height of the map
+	 */
+	public Map(int width, int height) {
+		this.minX = 0;
+		this.maxX = width - 1;
+		this.minY = 0;
+		this.maxY = height - 1;
+		this.tiles = new Tile[transformCoords(maxX, maxY) + 1]; //TODO mins!
+	}
+
+	/**
 	 * Returns the lowest allowed x coordinate of this map.
 	 *
 	 * @return the lowest x coordinate

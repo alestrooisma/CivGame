@@ -2,6 +2,7 @@ package civ;
 
 import civ.model.Civilization;
 import civ.controller.Controller;
+import civ.mapgen.MapGenerator;
 import civ.model.City;
 import civ.model.Map;
 import civ.model.Model;
@@ -22,16 +23,19 @@ public class CivGame {
 	public static void main(String[] args) {
 
 		// Create the map
-		int x = 25, y = 25;
-		Tile[] tiles = new Tile[x * y];
-		for (int i = 0; i < tiles.length; i++) {
-			tiles[i] = new Tile(new Point(i % x, i / x), randomTerrain());
-		}
-		Map map = new Map(0, x - 1, 0, y - 1, tiles);
+		int width = 25, height = 25;
+//		Tile[] tiles = new Tile[width * height];
+//		for (int i = 0; i < tiles.length; i++) {
+//			tiles[i] = new Tile(new Point(i % width, i / width), randomTerrain());
+//		}
+//		Map map = new Map(0, width - 1, 0, height - 1, tiles);
+		MapGenerator mapgen = new MapGenerator(width, height);
+		Map map = mapgen.generate();
+		mapgen.display();
 		// Create the player's civilization
 		Civilization netherlands = new Civilization("The Netherlands");
 		// Create a city
-		Point location = new Point(x / 2, y / 2);
+		Point location = new Point(width / 2, height / 2);
 		City amsterdam = City.createCity(netherlands, "Amsterdam", location, map);
 		amsterdam.addFood(amsterdam.getPopulation()); // To prevent starvation in the first turn
 		// Add starting buildings
@@ -41,13 +45,13 @@ public class CivGame {
 		location = new Point(location);
 		Unit unit = Unit.createUnit(netherlands, Unit.WARRIOR, 2.5, 1, 3, location, map);
 		// Create a settler
-		location = new Point(x / 2, y / 2 + 1);
+		location = new Point(width / 2, height / 2 + 1);
 		unit = Unit.createUnit(netherlands, Unit.SETTLER, 2.5, 0, 0, location, map);
 
 		// Create the GUI
 		CivGUI gui = new CivGUI();
 		Model model = new Model(map, new Civilization[]{netherlands});
-		Controller controller = new Controller(model, gui, new Point2D.Double(x / 2, y / 2));
+		Controller controller = new Controller(model, gui, new Point2D.Double(width / 2, height / 2));
 		gui.setController(controller);
 		controller.run();
 	}
