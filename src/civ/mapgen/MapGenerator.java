@@ -4,15 +4,19 @@
  */
 package civ.mapgen;
 
+import civ.mapgen.noise.NoiseMaps;
+import civ.mapgen.noise.PerlinNoise;
 import civ.model.Map;
 import civ.model.Tile;
 import java.awt.BorderLayout;
+import java.awt.GridLayout;
 import java.awt.Point;
 import java.awt.image.BufferedImage;
 import java.util.Random;
 import javax.swing.ImageIcon;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
+import javax.swing.JPanel;
 
 /**
  *
@@ -20,30 +24,53 @@ import javax.swing.JLabel;
  */
 public class MapGenerator {
 
-	public static int ZOOM = 10;
-	private int w, h;
-	private double[][] hm;
-	private Map map;
+	// Randomizers
 	private Random rand;
+	private PerlinNoise pngen;
+	//
+	// Map stuff
+	private int w, h;
+	private Map map;
+	//
+	// Subgenerators
+	private HeightMapGenerator hmgen;
+	private double[][] hm;
+	private double[][] humidity;
 
-	public MapGenerator(int w, int h) {
-		this(w, h, new Random().nextLong());
+	public MapGenerator(int w, int h, int hmtype) {
+		this(new Random().nextLong(), w, h, hmtype);
 	}
 
-	public MapGenerator(int w, int h, long seed) {
-		this(w, h, new Random(seed));
+	public MapGenerator(long seed, int w, int h, int hmtype) {
+		this(new Random(seed), w, h, hmtype);
 		System.out.println("Seed: " + seed);
 	}
 
-	private MapGenerator(int w, int h, Random rand) {
+
+	public MapGenerator(Random rand, int w, int h, int hmtype) {
+		this.rand = rand;
 		this.w = w;
 		this.h = h;
-		this.rand = rand;
+		pngen = new PerlinNoise(rand);
+		setHeightMapGenerator(hmtype);
+	}
+
+	private void setHeightMapGenerator(int type) {
+		switch (type) {
+			case 1:
+				hmgen = new PeaksHeightMapGenerator(rand, w, h, 20);
+				break;
+			default:
+				hmgen = new PerlinHeightMapGenerator(rand, w, h);
+				break;
+		}
 	}
 
 	public Map generate() {
-		hm = new HeightMapGenerator(rand, w, h, 20).generate();
-		Map map = new Map(w, h);
+		hm = hmgen.generate();
+//		humidity = NoiseMaps.getFractalNoise(pngen, w, h, 64, 3, 0.25);
+
+		map = new Map(w, h);
 		double z;
 		int terrain;
 		for (int y = 0; y < h; y++) {
@@ -59,19 +86,19 @@ public class MapGenerator {
 				map.setTile(new Tile(new Point(x, y), terrain), x, y);
 			}
 		}
-		this.map = map;
 		return map;
 	}
 
 	// Testing stuff
-	public void display() {
+	public void display(int zoom) {
 		// Use a label to display the image
 		JFrame frame = new JFrame();
 		frame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
-		JLabel lblimage1 = new JLabel(new ImageIcon(heightMapAsImage(ZOOM)));
-		frame.getContentPane().add(lblimage1, BorderLayout.CENTER);
-		JLabel lblimage2 = new JLabel(new ImageIcon(mapAsImage(ZOOM)));
-		frame.getContentPane().add(lblimage2, BorderLayout.LINE_END);
+		JPanel panel = new JPanel(new GridLayout(2, 2));
+		frame.getContentPane().add(panel, BorderLayout.CENTER);
+		panel.add(new JLabel(new ImageIcon(heightMapAsImage(zoom))));
+		panel.add(new JLabel(new ImageIcon(mapAsImage(zoom))));
+//		panel.add(new JLabel(new ImageIcon(humidityAsImage(zoom))));
 		frame.pack();
 		frame.setLocationRelativeTo(null);
 		frame.setVisible(true);
@@ -84,6 +111,18 @@ public class MapGenerator {
 			for (int x = 0; x < w * zoom; x++) {
 				value = (int) (hm[x / zoom][y / zoom] * 255);
 				value = value << 16 | value << 8 | value;
+				bi.setRGB(x, y, value);
+			}
+		}
+		return bi;
+	}
+
+	private BufferedImage humidityAsImage(int zoom) {
+		int value;
+		BufferedImage bi = new BufferedImage(w * zoom, h * zoom, BufferedImage.TYPE_INT_RGB);
+		for (int y = 0; y < h * zoom; y++) {
+			for (int x = 0; x < w * zoom; x++) {
+				value = (int) (humidity[x / zoom][y / zoom] * 255);
 				bi.setRGB(x, y, value);
 			}
 		}
@@ -115,12 +154,5 @@ public class MapGenerator {
 			}
 		}
 		return bi;
-	}
-
-	public static void main(String[] args) {
-//		MapGenerator mt = new MapGenerator(50, 50, 1234);
-		MapGenerator mt = new MapGenerator(50, 50);
-		mt.generate();
-		mt.display();
 	}
 }
