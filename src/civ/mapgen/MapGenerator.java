@@ -37,8 +37,6 @@ public class MapGenerator {
 	private double[][] hm;
 	private double[][] temperature;
 	private double[][] humidity;
-	private double[][] humidity2;
-	private double[][] humidity3;
 
 	public MapGenerator(int w, int h, int hmtype) {
 		this(new Random().nextLong(), w, h, hmtype);
@@ -70,29 +68,23 @@ public class MapGenerator {
 
 	public Map generate() {
 		hm = hmgen.generate();
-		temperature = NoiseMaps.getFractalNoise(pngen, w, h, 8, 3, 0.5);
-		double a = -4.0/((w-1)*(w-1));
-		double env = 0;
-		for (int y = 0; y < h; y++) {
-			env = a*y*(y-(h-1));
-			for (int x = 0; x < w; x++) {
-				temperature[x][y] = temperature[x][y] * env;
-			}
-		}
+		generateTemperatureMap();
 		generateHumidityMap();
 
 		map = new Map(w, h);
-		double z;
+		double v, hh, tt;
 		int terrain;
 		for (int y = 0; y < h; y++) {
 			for (int x = 0; x < w; x++) {
-				z = hm[x][y];
+//				z = hm[x][y];
 				if (isWater(x, y)) {
 					terrain = Tile.WATER;
-//				} else if (z == 0) {
-//					terrain = Tile.GRASSLAND;
 				} else {
-					terrain = rand.nextDouble() > 0.3 ? Tile.GRASSLAND : Tile.PLAINS;
+//					terrain = rand.nextDouble() > 0.3 ? Tile.GRASSLAND : Tile.PLAINS;
+					hh = 1-humidity[x][y];
+					tt = 2*temperature[x][y]-1;
+					v = (1-hh*hh)*(1-tt*tt);
+					terrain = pick(new double[]{v, 1-v}) == 0 ? Tile.GRASSLAND : Tile.PLAINS;
 				}
 				map.setTile(new Tile(new Point(x, y), terrain), x, y);
 			}
@@ -102,8 +94,6 @@ public class MapGenerator {
 
 	private void generateHumidityMap() {
 		humidity = new double[w][h];
-		humidity2 = new double[w][h];
-		humidity3 = new double[w][h];
 		for (int y = 0; y < h; y++) {
 			for (int x = 0; x < w; x++) {
 				if (isWater(x, y)) {
@@ -145,13 +135,24 @@ public class MapGenerator {
 		double f = 0.1;
 		for (int y = 0; y < h; y++) {
 			for (int x = 0; x < w; x++) {
-				humidity2[x][y] = 1 / (f * humidity[x][y] + 1);
-				if (humidity2[x][y] == 1) {
-					humidity3[x][y] = 1;
-				} else {
-					humidity3[x][y] = humidity2[x][y] * (1 - 0.5*temperature[x][y]);
-				}
-				humidity[x][y] = humidity[x][y] / 17;
+				humidity[x][y] = 1 / (f * humidity[x][y] + 1);
+//				if (humidity[x][y] == 1) {
+//					humidity[x][y] = 1;
+//				} else {
+//					humidity[x][y] = humidity[x][y] * (1 - 0.5*temperature[x][y]);
+//				}
+			}
+		}
+	}
+
+	private void generateTemperatureMap() {
+		temperature = NoiseMaps.getFractalNoise(pngen, w, h, 8, 3, 0.5);
+		double a = -1.0 / ((h - 1) * (h - 1)); //Env peaks at 1 for a=4a
+		double env = 0;
+		for (int y = 0; y < h; y++) {
+			env = a * y * (y - (h - 1));
+			for (int x = 0; x < w; x++) {
+				temperature[x][y] = 1 * env + temperature[x][y] * 3 * env;
 			}
 		}
 	}
@@ -159,8 +160,21 @@ public class MapGenerator {
 	private boolean isWater(int x, int y) {
 		return hm[x][y] < 0;
 	}
-	// Testing stuff
 
+	public int pick(double[] odds) {
+		double r = rand.nextDouble();
+		for (int i = 0; i < odds.length; i++) {
+			if (r < odds[i]) {
+				return i;
+			} else {
+				r -= odds[i];
+			}
+		}
+		return -1;
+	}
+
+	// Testing stuff
+	//
 	public void display(int zoom) {
 		// Use a label to display the image
 		JFrame frame = new JFrame();
@@ -171,8 +185,6 @@ public class MapGenerator {
 		panel.add(new JLabel(new ImageIcon(mapAsImage(zoom))));
 		panel.add(new JLabel(new ImageIcon(temperatureAsImage(zoom))));
 		panel.add(new JLabel(new ImageIcon(humidityAsImage(zoom, humidity))));
-		panel.add(new JLabel(new ImageIcon(humidityAsImage(zoom, humidity2))));
-		panel.add(new JLabel(new ImageIcon(humidityAsImage(zoom, humidity3))));
 		frame.pack();
 		frame.setLocationRelativeTo(null);
 		frame.setVisible(true);
@@ -246,7 +258,8 @@ public class MapGenerator {
 	}
 
 	public static void main(String[] args) {
-		MapGenerator mg = new MapGenerator(-4251178704391246875L, 128, 128, 2);
+//		MapGenerator mg = new MapGenerator(-4251178704391246875L, 128, 128, 2);
+		MapGenerator mg = new MapGenerator(128, 128, 2);
 		mg.generate();
 		mg.display(3);
 //		MapGenerator mg = new MapGenerator(-4251178704391246875L, 16, 16, 2);
